@@ -15,20 +15,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        configureOauth(http);
-        configureUrlSecurity(http);
-        return http.build();
-    }
-
-    private void configureUrlSecurity(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated()
-                );
-    }
-
-    private void configureOauth(HttpSecurity http) throws Exception {
-        http.oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()));
+                )
+                .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()));
+        return http.build();
     }
 }
