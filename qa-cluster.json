@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "5a283fbe-3c72-4c00-9ca2-7c2d0e2d94a1",
+		"name": "qa-cluster",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22548524"
+	},
+	"item": [
+		{
+			"name": "http://7c5d-54-183-42-112.ngrok-free.app/realms/gfl6/protocol/openid-connect/token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "springsecurity",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "PJLgERAkDZGNnjUjcUGyExJBgy5ayNkn",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "ivan",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://7c5d-54-183-42-112.ngrok-free.app/realms/gfl6/protocol/openid-connect/token",
+					"protocol": "http",
+					"host": [
+						"7c5d-54-183-42-112",
+						"ngrok-free",
+						"app"
+					],
+					"path": [
+						"realms",
+						"gfl6",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
