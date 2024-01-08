@@ -1,4 +1,4 @@
-package com.gfl.client.service;
+package com.gfl.client.service.scenario;
 
 import com.gfl.client.model.ScenarioRequest;
 import org.springframework.beans.factory.annotation.Value;
