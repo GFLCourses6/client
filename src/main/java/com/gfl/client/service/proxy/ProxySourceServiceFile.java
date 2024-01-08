@@ -22,23 +22,12 @@ public class ProxySourceServiceFile implements ProxySourceService {
         this.fileParser = fileParser;
         this.proxyConfigHolders = new LinkedBlockingDeque<>();
     }
-
+    @Override
     public List<ProxyConfigHolder> getAllProxyConfigs(){
         try {
             return fileParser.getAllFromFile(PROXY_CONFIGS_PATH, ProxyConfigHolder.class);
         } catch (IOException e){
             throw new FileReadException(e.getMessage());
         }
-    }
-    @Override
-    public ProxyConfigHolder getProxy(){
-        ProxyConfigHolder proxyConfigHolder = proxyConfigHolders.peek();
-
-        synchronized (this){
-            if(proxyConfigHolder == null){
-                proxyConfigHolders.addAll(getAllProxyConfigs());
-            }
-        }
-        return proxyConfigHolders.poll();
     }
 }
