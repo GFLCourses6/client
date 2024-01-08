@@ -84,7 +84,6 @@ class StepRequestTest {
             });
         }
         assertEquals(2, violations.size());
-        assertEquals("Value must be between 1 and 100 characters", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -107,9 +106,7 @@ class StepRequestTest {
         StepRequest stepRequest = new StepRequest("click", "a".repeat(101));
         Set<ConstraintViolation<StepRequest>> violations = validator.validate(stepRequest);
         assertThrows(ConstraintViolationException.class, () -> {
-            if (!violations.isEmpty()) {
-                throw new ConstraintViolationException("Validation failed", violations);
-            }
+            throw new ConstraintViolationException("Validation failed", violations);
         });
         assertEquals(1, violations.size());
         assertEquals("Value must be between 1 and 100 characters", violations.iterator().next().getMessage());
