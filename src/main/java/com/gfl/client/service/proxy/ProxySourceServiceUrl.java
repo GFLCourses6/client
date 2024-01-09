@@ -33,7 +33,8 @@ public class ProxySourceServiceUrl implements ProxySourceService {
                 apiUrl, HttpMethod.GET, entity, ProxyApiResponse.class);
         var proxies = responseEntity.getBody();
 
-        if (responseEntity.getStatusCode().is2xxSuccessful() && proxies.getCount() > 0) {
+        if (responseEntity.getStatusCode().is2xxSuccessful()
+                && proxies != null && proxies.getCount() > 0) {
             return proxyMapper.responseToProxyConfigHolder(proxies.getResults());
         }
         return List.of();

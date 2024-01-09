@@ -2,7 +2,9 @@ package com.gfl.client.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -10,7 +12,7 @@ import lombok.*;
 public class ProxyConfigHolder {
 
     @Valid
-    @NotNull
+    @NotNull(message = "proxy network configuration can't be null")
     private ProxyNetworkConfig proxyNetworkConfig;
 
     @Valid
