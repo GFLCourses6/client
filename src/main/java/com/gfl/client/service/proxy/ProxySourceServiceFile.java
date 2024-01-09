@@ -6,13 +6,15 @@ import com.gfl.client.model.ProxyConfigHolder;
 import com.gfl.client.util.file.FileParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
-@Service
+@Service(value = "proxySourceServiceFile")
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "proxy.source.type", havingValue = "file")
 public class ProxySourceServiceFile implements ProxySourceService {
 
     @Value("${proxy.filepath}")
