@@ -1,6 +1,6 @@
 package com.gfl.client.controller;
 
-import com.gfl.client.model.ProxyCredentialsRequest;
+import com.gfl.client.model.ProxyConfigHolder;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,8 +17,8 @@ public class ProxySourceController {
 
     @PostMapping
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<ProxyCredentialsRequest> addProxy(
-            @RequestBody @Valid ProxyCredentialsRequest proxy) {
+    public ResponseEntity<ProxyConfigHolder> addProxy(
+            @RequestBody @Valid ProxyConfigHolder proxy) {
         // todo: implement logic to add proxy
         return ResponseEntity.ok(proxy);
     }
