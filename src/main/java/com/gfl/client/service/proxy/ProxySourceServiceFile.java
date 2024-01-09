@@ -2,30 +2,27 @@ package com.gfl.client.service.proxy;
 
 
 import com.gfl.client.exception.FileReadException;
-import com.gfl.client.model.dto.ProxyConfigHolder;
+import com.gfl.client.model.ProxyConfigHolder;
 import com.gfl.client.util.file.FileParser;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 
 @Service
+@RequiredArgsConstructor
 public class ProxySourceServiceFile implements ProxySourceService {
-    private static final String PROXY_CONFIGS_PATH = "json/ProxyConfigs.json";
+
+    @Value("${proxy.filepath}")
+    private String proxyFilePath;
     private final FileParser fileParser;
-    private final BlockingQueue<ProxyConfigHolder> proxyConfigHolders;
-    @Autowired
-    public ProxySourceServiceFile(FileParser fileParser) {
-        this.fileParser = fileParser;
-        this.proxyConfigHolders = new LinkedBlockingDeque<>();
-    }
+
     @Override
     public List<ProxyConfigHolder> getAllProxyConfigs(){
         try {
-            return fileParser.getAllFromFile(PROXY_CONFIGS_PATH, ProxyConfigHolder.class);
+            return fileParser.getAllFromFile(proxyFilePath, ProxyConfigHolder.class);
         } catch (IOException e){
             throw new FileReadException(e.getMessage());
         }

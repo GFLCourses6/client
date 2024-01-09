@@ -1,6 +1,7 @@
-package com.gfl.client.service;
+package com.gfl.client.service.scenario;
 
 import com.gfl.client.model.ScenarioRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,16 +13,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RestTemplateScenarioService
         implements ScenarioService {
 
     @Value("#{ '${worker.base.uri}' + '/api/scenarios' }")
     private String baseUrl;
     private final RestTemplate restTemplate;
-
-    public RestTemplateScenarioService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     public ResponseEntity<Void> sendScenarios(List<ScenarioRequest> scenarios) {
         HttpHeaders headers = new HttpHeaders();

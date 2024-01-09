@@ -1,4 +1,4 @@
-package com.gfl.client.handler;
+package com.gfl.client.exception.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
