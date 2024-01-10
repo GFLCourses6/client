@@ -5,17 +5,13 @@ import com.gfl.client.model.ProxyApiResponse;
 import com.gfl.client.model.ProxyConfigHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.*;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
 
-@Service(value = "proxySourceServiceUrl")
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "proxy.source.type", havingValue = "http")
 public class ProxySourceServiceUrl implements ProxySourceService {
 
     @Value("${proxy.webshare.api-key}")

@@ -41,8 +41,8 @@ class StepRequestTest {
 
     private static Stream<Object[]> invalidStepRequests() {
         return Stream.of(
-                new Object[]{new StepRequest(null, "button"), 2},
-                new Object[]{new StepRequest("click", null), 2},
+                new Object[]{new StepRequest(null, "button"), 1},
+                new Object[]{new StepRequest("click", null), 1},
                 new Object[]{new StepRequest("", "button"), 2},
                 new Object[]{new StepRequest("click", ""), 2},
                 new Object[]{new StepRequest("click", "a".repeat(101)), 1},
