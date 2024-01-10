@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "proxy.source.type",
+      "type": "java.lang.String",
+      "description": "Description for proxy.source.type."
+  }
+] }
