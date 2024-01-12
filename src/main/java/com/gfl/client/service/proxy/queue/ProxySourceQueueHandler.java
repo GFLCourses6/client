@@ -1,4 +1,4 @@
-package com.gfl.client.service.proxy.handler;
+package com.gfl.client.service.proxy.queue;
 
 import com.gfl.client.model.ProxyConfigHolder;
 

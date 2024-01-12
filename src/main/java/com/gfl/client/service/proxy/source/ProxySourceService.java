@@ -1,4 +1,4 @@
-package com.gfl.client.service.proxy;
+package com.gfl.client.service.proxy.source;
 
 import com.gfl.client.model.ProxyConfigHolder;
 

@@ -1,9 +1,9 @@
 package com.gfl.client.config;
 
 import com.gfl.client.mapper.ProxyMapper;
-import com.gfl.client.service.proxy.ProxySourceService;
-import com.gfl.client.service.proxy.ProxySourceServiceFile;
-import com.gfl.client.service.proxy.ProxySourceServiceUrl;
+import com.gfl.client.service.proxy.source.ProxySourceService;
+import com.gfl.client.service.proxy.source.ProxySourceServiceFile;
+import com.gfl.client.service.proxy.source.ProxySourceServiceUrl;
 import com.gfl.client.util.file.FileParser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

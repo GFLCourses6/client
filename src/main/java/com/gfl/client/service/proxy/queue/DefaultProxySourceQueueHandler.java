@@ -1,7 +1,7 @@
-package com.gfl.client.service.proxy.handler;
+package com.gfl.client.service.proxy.queue;
 
 import com.gfl.client.model.ProxyConfigHolder;
-import com.gfl.client.service.proxy.ProxySourceService;
+import com.gfl.client.service.proxy.source.ProxySourceService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
