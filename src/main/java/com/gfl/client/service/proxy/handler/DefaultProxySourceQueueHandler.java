@@ -27,9 +27,6 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler{
 
     }
 
-    public Map<String, BlockingQueue<ProxyConfigHolder>> getQueues(){
-        return queues;
-    }
     @Override
     public void addProxy(ProxyConfigHolder proxy){
         // todo: validate proxy, if it's invalid, throw an exception
