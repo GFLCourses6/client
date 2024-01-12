@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 @Service
 public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
 
-    private final String COMMON_QUEUE = "common";
+    private static final String COMMON_QUEUE = "common";
     private final Map<String, BlockingQueue<ProxyConfigHolder>> queues;
     private final AsyncProxyQueueTaskProcessor asyncProxyQueueTaskExecutor;
     // todo: add ProxyValidationService dependency
@@ -40,6 +40,7 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
 
     @Override
     public void addProxy(String queueName, ProxyConfigHolder proxy) {
+        // todo: validate proxy, if it's invalid, throw an exception
         Queue<ProxyConfigHolder> queue = queues.computeIfAbsent(
                 queueName, key -> new LinkedBlockingDeque<>());
         queue.add(proxy);
