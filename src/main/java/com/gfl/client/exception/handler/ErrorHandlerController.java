@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class ErrorHandlerController {
@@ -33,9 +31,9 @@ public class ErrorHandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException exception) {
         String errorMessage = exception.getBindingResult()
-                                       .getFieldErrors()
+                                       .getAllErrors()
                                        .stream()
-                                       .map(fieldError -> fieldError.getDefaultMessage() + "; ")
+                                       .map(error -> error.getDefaultMessage() + "; ")
                                        .collect(Collectors.joining("", "Validation errors: ", ""));
         return ResponseEntity.badRequest().body(errorMessage);
     }
@@ -57,10 +55,10 @@ public class ErrorHandlerController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler({Exception.class, IllegalStateException.class})
     public ResponseEntity<String> handleException(Exception ex) {
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
     }
 
     @ResponseStatus(METHOD_NOT_ALLOWED)

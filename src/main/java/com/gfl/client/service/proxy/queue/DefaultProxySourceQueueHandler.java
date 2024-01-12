@@ -50,7 +50,7 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
     public ProxyConfigHolder getProxy(String username) {
         Queue<ProxyConfigHolder> commonQueue = getCommonQueue();
 
-        // retrieve user's proxy, if it doesn't exist, retrieve common proxy
+        // retrieve user's proxy, if it doesn't exist, retrieve common proxy, else return empty proxy
         return getUserProxy(username).orElseGet(() ->
                 getProxy(commonQueue).orElseGet(()-> {
                     asyncProxyQueueTaskExecutor.fillCommonQueue();
