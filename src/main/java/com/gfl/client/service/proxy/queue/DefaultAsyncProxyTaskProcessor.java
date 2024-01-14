@@ -30,7 +30,7 @@ public class DefaultAsyncProxyTaskProcessor implements AsyncProxyQueueTaskProces
 
     private void addProxy(ProxyConfigHolder proxy) {
         try {
-            proxySourceQueueHandler.addProxy(proxy);
+            proxySourceQueueHandler.addCommonProxy(proxy);
         } catch (Exception e) {
             logger.error("Couldn't add the proxy: {}", proxy);
         }

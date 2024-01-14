@@ -22,7 +22,11 @@ public class ProxyConfigHolder {
     private ProxyCredentials proxyCredentials;
 
     @Min(value = 1, message = "useTimes can't be lower than 1")
-    private Long useTimes = 1L;
+    private Long useTimes;
 
     private boolean useAlways;
+
+    public void countDownUseTimes() {
+        useTimes--;
+    }
 }
