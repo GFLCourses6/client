@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -27,13 +27,14 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
         this.asyncProxyQueueTaskExecutor = asyncProxyQueueTaskExecutor;
         this.queues = new ConcurrentHashMap<>();
         this.queueLocks = new ConcurrentHashMap<>();
-        this.queues.put(COMMON_QUEUE, new LinkedBlockingDeque<>());
+        this.queues.put(COMMON_QUEUE, new LinkedBlockingQueue<>());
         this.queueLocks.put(COMMON_QUEUE, new ReentrantLock());
     }
 
     @Override
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "${cron.remove.proxies}")
     public void removeInvalidProxies() {
+        System.out.println("HEHHEH");
         queues.forEach((key, queue) ->
                 queue.removeIf(p -> false)); // todo: remove if proxy is invalid
     }
@@ -48,7 +49,7 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
         // todo: validate proxy, if it's invalid, throw an exception
         queueLocks.computeIfAbsent(queueName, key -> new ReentrantLock());
         Queue<ProxyConfigHolder> queue = queues.computeIfAbsent(
-                queueName, key -> new LinkedBlockingDeque<>());
+                queueName, key -> new LinkedBlockingQueue<>());
 
         if (!proxy.isUseAlways() && proxy.getUseTimes() == null) {
             proxy.setUseTimes(1L);
