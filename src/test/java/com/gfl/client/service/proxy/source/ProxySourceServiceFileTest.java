@@ -36,14 +36,11 @@ class ProxySourceServiceFileTest {
 
     @Test
     void getAllProxyConfigs_Success() throws IOException {
-        // Arrange
         List<ProxyConfigHolder> expectedProxyConfigs = Collections.singletonList(new ProxyConfigHolder());
         when(fileParser.getAllFromFile(any(), any())).thenReturn(Collections.singletonList(expectedProxyConfigs));
 
-        // Act
         List<ProxyConfigHolder> actualProxyConfigs = proxySourceServiceFile.getAllProxyConfigs();
 
-        // Assert
         assertNotNull(actualProxyConfigs);
         assertEquals(Collections.singletonList(expectedProxyConfigs), actualProxyConfigs);
     }
