@@ -7,10 +7,12 @@ import com.gfl.client.service.proxy.source.ProxySourceServiceUrl;
 import com.gfl.client.util.file.FileParser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@ComponentScan(basePackages = "com.gfl.client.util.file")
 public class AppConfig {
 
     @Bean
@@ -18,13 +20,13 @@ public class AppConfig {
         return new RestTemplate();
     }
 
-    @Bean
+    @Bean(value = "proxySourceServiceUrlConfig")
     @ConditionalOnProperty(name = "proxy.source.type", havingValue = "url")
     public ProxySourceService proxySourceServiceUrl(RestTemplate restTemplate, ProxyMapper proxyMapper) {
         return new ProxySourceServiceUrl(restTemplate, proxyMapper);
     }
 
-    @Bean
+    @Bean(value = "proxySourceServiceFile")
     @ConditionalOnProperty(name = "proxy.source.type", havingValue = "file")
     public ProxySourceService proxySourceServiceFile(FileParser fileParser) {
         return new ProxySourceServiceFile(fileParser);

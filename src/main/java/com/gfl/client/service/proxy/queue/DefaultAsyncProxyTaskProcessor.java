@@ -4,7 +4,7 @@ import com.gfl.client.model.ProxyConfigHolder;
 import com.gfl.client.service.proxy.source.ProxySourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,15 +14,15 @@ public class DefaultAsyncProxyTaskProcessor implements AsyncProxyQueueTaskProces
     private final ProxySourceQueueHandler proxySourceQueueHandler;
     private final ProxySourceService proxySourceService;
 
-    public DefaultAsyncProxyTaskProcessor(ProxySourceQueueHandler proxySourceQueueHandler,
-                                          ProxySourceService proxySourceService) {
+    public DefaultAsyncProxyTaskProcessor(
+            ProxySourceQueueHandler proxySourceQueueHandler,
+            @Qualifier("proxySourceServiceUrl") ProxySourceService proxySourceService) {
         this.proxySourceQueueHandler = proxySourceQueueHandler;
         this.proxySourceService = proxySourceService;
         fillCommonQueue();
     }
 
     @Override
-    @Async
     public void fillCommonQueue() {
         proxySourceService.getAllProxyConfigs()
                 .forEach(this::addProxy);
