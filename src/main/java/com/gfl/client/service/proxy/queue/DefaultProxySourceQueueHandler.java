@@ -34,7 +34,6 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
     @Override
     @Scheduled(cron = "${cron.remove.proxies}")
     public void removeInvalidProxies() {
-        System.out.println("HEHHEH");
         queues.forEach((key, queue) ->
                 queue.removeIf(p -> false)); // todo: remove if proxy is invalid
     }

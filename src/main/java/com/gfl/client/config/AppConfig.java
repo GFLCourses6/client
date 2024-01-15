@@ -19,7 +19,7 @@ public class AppConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "proxy.source.type", havingValue = "http")
+    @ConditionalOnProperty(name = "proxy.source.type", havingValue = "url")
     public ProxySourceService proxySourceServiceUrl(RestTemplate restTemplate, ProxyMapper proxyMapper) {
         return new ProxySourceServiceUrl(restTemplate, proxyMapper);
     }
