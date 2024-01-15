@@ -47,10 +47,8 @@ class ProxySourceServiceFileTest {
 
     @Test
     void getAllProxyConfigs_FileReadException() throws IOException {
-        // Arrange
         when(fileParser.getAllFromFile(any(), any())).thenThrow(new IOException("Test IOException"));
 
-        // Act & Assert
         assertThrows(FileReadException.class, () -> proxySourceServiceFile.getAllProxyConfigs());
     }
 }
