@@ -20,40 +20,43 @@ import java.io.IOException;
 @Service
 public class DefaultProxyValidationService implements ProxyValidationService {
 
-  @Value("${proxy.validation.test-url}")
-  private String testUrl;
+    @Value("${proxy.validation.test-url}")
+    private String testUrl;
 
-  @Override
-  public boolean isValidProxy(ProxyConfigHolder proxyConfig) {
-    try (CloseableHttpClient httpClient = buildHttpClient(proxyConfig)) {
-      HttpUriRequest request = new HttpGet(testUrl);
-      CloseableHttpResponse response = httpClient.execute(request);
+    @Override
+    public boolean isValidProxy(ProxyConfigHolder proxyConfig) {
+        try (CloseableHttpClient httpClient = buildHttpClient(proxyConfig)) {
+            HttpUriRequest request = new HttpGet(testUrl);
+            CloseableHttpResponse response = httpClient.execute(request);
 
-      return response.getStatusLine().getStatusCode() == 200;
-    } catch (IOException e) {
+            return response.getStatusLine().getStatusCode() == 200;
+        } catch (IOException e) {
 
-      return false;
-    }
-  }
-
-  private CloseableHttpClient buildHttpClient(ProxyConfigHolder proxyConfig) {
-    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-
-    ProxyNetworkConfig networkConfig = proxyConfig.getProxyNetworkConfig();
-    ProxyCredentials credentials = proxyConfig.getProxyCredentials();
-
-    if (credentials != null) {
-      AuthScope authScope = new AuthScope(networkConfig.getHostname(), networkConfig.getPort());
-      credentialsProvider.setCredentials(authScope, new org.apache.http.auth.UsernamePasswordCredentials(
-          credentials.getUsername(), credentials.getPassword()
-      ));
+            return false;
+        }
     }
 
-    HttpHost proxy = new HttpHost(networkConfig.getHostname(), networkConfig.getPort());
+    private CloseableHttpClient buildHttpClient(ProxyConfigHolder proxyConfig) {
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
-    return HttpClients.custom()
-        .setProxy(proxy)
-        .setDefaultCredentialsProvider(credentialsProvider)
-        .build();
-  }
+        ProxyNetworkConfig networkConfig = proxyConfig.getProxyNetworkConfig();
+        ProxyCredentials credentials = proxyConfig.getProxyCredentials();
+
+        if (credentials != null) {
+            AuthScope authScope = new AuthScope(networkConfig.getHostname(), networkConfig.getPort());
+            credentialsProvider.setCredentials(authScope, new org.apache.http.auth.UsernamePasswordCredentials(
+                credentials.getUsername(), credentials.getPassword()
+            ));
+        }
+
+        HttpHost proxy = new HttpHost(networkConfig.getHostname(), networkConfig.getPort());
+
+        return HttpClients.custom()
+            .setProxy(proxy)
+            .setDefaultCredentialsProvider(credentialsProvider)
+            .build();
+    }
 }
+
+
+
