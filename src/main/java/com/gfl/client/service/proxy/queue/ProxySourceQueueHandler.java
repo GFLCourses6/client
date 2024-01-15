@@ -4,8 +4,8 @@ import com.gfl.client.model.ProxyConfigHolder;
 
 public interface ProxySourceQueueHandler {
 
-    void addProxy(ProxyConfigHolder proxyConfigHolder);
-    void addProxy(String queueName, ProxyConfigHolder proxy);
+    void addCommonProxy(ProxyConfigHolder proxyConfigHolder);
+    void addProxy(String queueName, ProxyConfigHolder proxyConfigHolder);
     ProxyConfigHolder getProxy(String username);
     void removeInvalidProxies();
 }
