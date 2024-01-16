@@ -3,8 +3,14 @@ package com.gfl.client.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class ProxyConfigHolderTest {
 
@@ -75,20 +81,35 @@ class ProxyConfigHolderTest {
         assertEquals(proxyConfigHolder, proxyConfigHolder1);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("getDifferentProxyConfigHolders")
     @DisplayName("Test equality between proxyConfigHolder objects")
-    void testEqualsFailed() {
-        ProxyConfigHolder proxyConfigHolder1 = new ProxyConfigHolder();
-        ProxyNetworkConfig config = new ProxyNetworkConfig();
-        config.setHostname("hostname1");
-        config.setPort(8081);
-        ProxyCredentials credentials = new ProxyCredentials();
-        credentials.setUsername("username1");
-        credentials.setPassword("password1");
+    void testEqualsFailed(ProxyConfigHolder otherConfigHolder) {
+        assertNotEquals(proxyConfigHolder, otherConfigHolder);
+    }
 
-        proxyConfigHolder1.setProxyCredentials(credentials);
-        proxyConfigHolder1.setProxyNetworkConfig(config);
-        assertNotEquals(proxyConfigHolder, proxyConfigHolder1);
+    static Stream<ProxyConfigHolder> getDifferentProxyConfigHolders() {
+        ProxyConfigHolder configHolder1 = new ProxyConfigHolder();
+        ProxyNetworkConfig config1 = new ProxyNetworkConfig();
+        config1.setHostname("hostname1");
+        config1.setPort(8081);
+        ProxyCredentials credentials1 = new ProxyCredentials();
+        credentials1.setUsername("username1");
+        credentials1.setPassword("password1");
+        configHolder1.setProxyCredentials(credentials1);
+        configHolder1.setProxyNetworkConfig(config1);
+
+        ProxyConfigHolder configHolder2 = new ProxyConfigHolder();
+        ProxyNetworkConfig config2 = new ProxyNetworkConfig();
+        config2.setHostname("hostname2");
+        config2.setPort(8082);
+        ProxyCredentials credentials2 = new ProxyCredentials();
+        credentials2.setUsername("username2");
+        credentials2.setPassword("password2");
+        configHolder2.setProxyCredentials(credentials2);
+        configHolder2.setProxyNetworkConfig(config2);
+
+        return Stream.of(configHolder1, configHolder2);
     }
 
     @Test

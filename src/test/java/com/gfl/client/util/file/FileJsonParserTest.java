@@ -12,7 +12,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Queue;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileJsonParserTest {
 
@@ -23,9 +24,6 @@ class FileJsonParserTest {
     void testGetAllFromFile(Queue<ProxyConfigHolder> expected) throws IOException {
         List<ProxyConfigHolder> actual = fileJsonParser.getAllFromFile(
                 "json/ProxyConfigs.json", ProxyConfigHolder.class);
-        System.out.println(actual);
-        System.out.println("ex");
-        System.out.println(expected);
         assertTrue(actual.containsAll(expected));
     }
 
@@ -33,7 +31,7 @@ class FileJsonParserTest {
     void testGetFromFile() throws IOException {
         ProxyNetworkConfig expected = new ProxyNetworkConfig("proxy1.example.com", 8080);
         ProxyNetworkConfig actual = fileJsonParser.getFromFile(
-                "json/SingleProxyNetworkConfig.json", ProxyNetworkConfig.class);
+                "SingleProxyNetworkConfig.json", ProxyNetworkConfig.class);
 
         assertEquals(expected, actual);
     }
