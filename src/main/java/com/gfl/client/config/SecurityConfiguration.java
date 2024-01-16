@@ -24,7 +24,7 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.anyRequest().authenticated()
+                        auth.anyRequest().permitAll() // todo: add api key during proxy retrieving
                 )
                 .oauth2ResourceServer(oauth ->
                         oauth.jwt(

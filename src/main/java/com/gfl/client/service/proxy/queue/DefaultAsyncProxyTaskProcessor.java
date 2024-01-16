@@ -7,25 +7,35 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Service
 public class DefaultAsyncProxyTaskProcessor implements AsyncProxyQueueTaskProcessor {
 
     private final Logger logger = LoggerFactory.getLogger(DefaultAsyncProxyTaskProcessor.class);
     private final ProxySourceQueueHandler proxySourceQueueHandler;
     private final ProxySourceService proxySourceService;
+    private final Lock lock;
 
     public DefaultAsyncProxyTaskProcessor(ProxySourceQueueHandler proxySourceQueueHandler,
                                           ProxySourceService proxySourceService) {
         this.proxySourceQueueHandler = proxySourceQueueHandler;
         this.proxySourceService = proxySourceService;
+        this.lock = new ReentrantLock();
         fillCommonQueue();
     }
 
     @Override
     @Async
     public void fillCommonQueue() {
-        proxySourceService.getAllProxyConfigs()
-                .forEach(this::addProxy);
+        if (lock.tryLock()) {
+            try {
+                proxySourceService.getAllProxyConfigs().forEach(this::addProxy);
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 
     private void addProxy(ProxyConfigHolder proxy) {
