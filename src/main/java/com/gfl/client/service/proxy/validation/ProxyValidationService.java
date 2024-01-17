@@ -4,5 +4,6 @@ import com.gfl.client.model.ProxyConfigHolder;
 
 public interface ProxyValidationService {
     boolean isValidProxy(ProxyConfigHolder proxyConfig);
+    boolean isInvalidProxy(ProxyConfigHolder proxyConfig);
 }
 

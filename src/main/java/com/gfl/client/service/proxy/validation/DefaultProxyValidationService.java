@@ -7,31 +7,39 @@ import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Service
 public class DefaultProxyValidationService implements ProxyValidationService {
 
-    @Value("${proxy.validation.test-url}")
-    private String testUrl;
+    @Value("${proxy.validation.timeout}")
+    private int timeout;
+    private final HttpUriRequest request;
+
+    public DefaultProxyValidationService(@Qualifier("proxyValidationRequest") HttpUriRequest request) {
+        this.request = request;
+    }
+
+    @Override
+    public boolean isInvalidProxy(ProxyConfigHolder proxyConfig) {
+        return !isValidProxy(proxyConfig);
+    }
 
     @Override
     public boolean isValidProxy(ProxyConfigHolder proxyConfig) {
         try (CloseableHttpClient httpClient = buildHttpClient(proxyConfig)) {
-            HttpUriRequest request = new HttpGet(testUrl);
             CloseableHttpResponse response = httpClient.execute(request);
-
-            return response.getStatusLine().getStatusCode() == 200;
-        } catch (IOException e) {
-
+            int statusCode = response.getStatusLine().getStatusCode();
+            return statusCode == 200 || statusCode == 429; // ok or too many requests
+        } catch (Exception e) {
             return false;
         }
     }
@@ -50,13 +58,13 @@ public class DefaultProxyValidationService implements ProxyValidationService {
         }
 
         HttpHost proxy = new HttpHost(networkConfig.getHostname(), networkConfig.getPort());
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(timeout).build());
 
         return HttpClients.custom()
             .setProxy(proxy)
             .setDefaultCredentialsProvider(credentialsProvider)
+            .setConnectionManager(cm)
             .build();
     }
 }
-
-
-
