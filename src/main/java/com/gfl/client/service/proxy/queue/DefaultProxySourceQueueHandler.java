@@ -90,14 +90,14 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
                     .filter(proxyValidationService::isValidProxy)
                     .findFirst();
 
-            optionalProxy.ifPresent(proxy -> remove(proxy, queue));
+            optionalProxy.ifPresent(proxy -> tryRemove(proxy, queue));
             return optionalProxy;
         } finally {
             lock.unlock();
         }
     }
 
-    private void remove(ProxyConfigHolder proxyConfigHolder, Queue<ProxyConfigHolder> queue) {
+    private void tryRemove(ProxyConfigHolder proxyConfigHolder, Queue<ProxyConfigHolder> queue) {
         if (!proxyConfigHolder.isUseAlways()) {
             proxyConfigHolder.countDownUseTimes();
             if (proxyConfigHolder.getUseTimes() == 0) {
