@@ -1,8 +1,14 @@
 package com.gfl.client.model;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -10,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class ProxyCredentialsTest {
     private ProxyCredentials proxyCredentials;
+    private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private final Validator validator = validatorFactory.getValidator();
 
     @BeforeEach
     void setUp(){
@@ -90,6 +98,79 @@ class ProxyCredentialsTest {
 
         assertEquals(proxyCredentials, credentials);
         assertEquals(proxyCredentials.hashCode(), credentials.hashCode());
+    }
+
+    @Test
+    @DisplayName("Test validation fails for null ProxyCredentials")
+    void testValidationFailsForNullProxyCredentials() {
+        ProxyCredentials credentials = new ProxyCredentials(null, null);
+        Set<ConstraintViolation<ProxyCredentials>> violations = validator.validate(credentials);
+
+        assertEquals(2, violations.size());
+
+        ConstraintViolation<ProxyCredentials> usernameViolation = violations.stream()
+                .filter(v -> {
+                    return v.getPropertyPath().toString().equals("username");
+                })
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected violation for null username not found"));
+        assertEquals("Username must not be blank", usernameViolation.getMessage());
+
+        ConstraintViolation<ProxyCredentials> passwordViolation = violations.stream()
+                .filter(v -> {
+                    return v.getPropertyPath().toString().equals("password");
+                })
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected violation for null password not found"));
+        assertEquals("Password must not be blank", passwordViolation.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test validation fails for more size than should be in ProxyCredentials")
+    void testValidationFailsForSizeMoreProxyCredentials() {
+        ProxyCredentials credentials = new ProxyCredentials("ThisIsAHostnameWithMoreThanFiftyCharactersInThisSentence", "t#9mBc!RvXzP7sHqGjUyLxKvT1iFwOoD2eA3nZ4rY5e6d7u8i9t0yT1o2a3l4l5e6n7g8a9r0p!i@l5434t#9mBc!RvXzP7sHqGjUyLxKvT1iFwOoD2eA3nZ4rY5e6d7u8i9t0yT1o2a3l4l5e6n7g8a9r0p!i@l5434");
+        Set<ConstraintViolation<ProxyCredentials>> violations = validator.validate(credentials);
+
+        assertEquals(2, violations.size());
+
+        ConstraintViolation<ProxyCredentials> usernameViolation = violations.stream()
+                .filter(v -> {
+                    return v.getPropertyPath().toString().equals("username");
+                })
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected violation for 50+ hostname letters"));
+        assertEquals("Username must be between 3 and 50 characters", usernameViolation.getMessage());
+
+        ConstraintViolation<ProxyCredentials> passwordViolation = violations.stream()
+                .filter(v -> {
+                    return v.getPropertyPath().toString().equals("password");
+                })
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected violation for password more than 65535"));
+        assertEquals("Password must be between 6 and 100 characters", passwordViolation.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test validation fails for less size than should be in ProxyCredentials")
+    void testValidationFailsForSizeLessProxyCredentials() {
+        ProxyCredentials credentials = new ProxyCredentials("us", "1234");
+        Set<ConstraintViolation<ProxyCredentials>> violations = validator.validate(credentials);
+
+        ConstraintViolation<ProxyCredentials> usernameViolation = violations.stream()
+                .filter(v -> {
+                    return v.getPropertyPath().toString().equals("username");
+                })
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected violation for 50+ hostname letters"));
+        assertEquals("Username must be between 3 and 50 characters", usernameViolation.getMessage());
+
+        ConstraintViolation<ProxyCredentials> passwordViolation = violations.stream()
+                .filter(v -> {
+                    return v.getPropertyPath().toString().equals("password");
+                })
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected violation for port more than 65535"));
+        assertEquals("Password must be between 6 and 100 characters", passwordViolation.getMessage());
     }
 
 }
