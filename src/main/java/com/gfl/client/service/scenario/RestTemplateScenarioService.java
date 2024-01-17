@@ -1,10 +1,13 @@
 package com.gfl.client.service.scenario;
 
 import com.gfl.client.model.ScenarioRequest;
+import com.gfl.client.model.ScenarioResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,14 +20,40 @@ import java.util.List;
 public class RestTemplateScenarioService
         implements ScenarioService {
 
-    @Value("#{ '${worker.base.uri}' + '/api/scenarios' }")
+    @Value("${worker.base.uri}")
     private String baseUrl;
     private final RestTemplate restTemplate;
 
-    public ResponseEntity<Void> sendScenarios(List<ScenarioRequest> scenarios) {
+    public ResponseEntity<Void> sendScenarios(
+            List<ScenarioRequest> scenarios) {
+        String uri = "%s/api/scenario/queue".formatted(baseUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<List<ScenarioRequest>> requestEntity = new HttpEntity<>(scenarios, headers);
-        return restTemplate.postForEntity(baseUrl, requestEntity, Void.class);
+        return restTemplate.postForEntity(
+                uri, new HttpEntity<>(scenarios, headers), Void.class);
+    }
+
+    @Override
+    public List<ScenarioResult> getExecutedScenarios(String username) {
+        String url = "%s/api/result/%s".formatted(baseUrl, username);
+        ResponseEntity<List<ScenarioResult>> response =
+                restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {});
+        return response.getBody();
+    }
+
+    @Override
+    public List<ScenarioRequest> getScenariosFromQueue(String username) {
+        String url = "%s/api/scenario/queue/%s".formatted(baseUrl, username);
+        ResponseEntity<List<ScenarioRequest>> response =
+                restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                null,
+                new ParameterizedTypeReference<>() {});
+        return response.getBody();
     }
 }

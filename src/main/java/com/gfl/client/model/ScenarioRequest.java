@@ -19,6 +19,10 @@ import java.util.List;
 @NoArgsConstructor
 public class ScenarioRequest {
 
+    @NotBlank(message = "Username must not be blank")
+    @Size(min = 1, max = 50, message = "Username must be between {min} and {max} characters")
+    private String username;
+
     @NotBlank(message = "Name must not be blank")
     @Size(min = 1, max = 50, message = "Name must be between {min} and {max} characters")
     private String name;
