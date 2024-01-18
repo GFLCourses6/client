@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ScenarioService {
-    List<ScenarioResult> getExecutedScenarios(String username);
-
-    List<ScenarioRequest> getScenariosFromQueue(String username);
+    ResponseEntity<List<ScenarioResult>> getExecutedScenarios(String username);
 
     ResponseEntity<Void> sendScenarios(List<ScenarioRequest> requests);
+
+    ResponseEntity<List<ScenarioRequest>> getScenarioFromQueue(String username, String scenarioName);
 }

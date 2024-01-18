@@ -34,26 +34,24 @@ public class RestTemplateScenarioService
     }
 
     @Override
-    public List<ScenarioResult> getExecutedScenarios(String username) {
+    public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(String username) {
         String url = "%s/api/result/%s".formatted(baseUrl, username);
-        ResponseEntity<List<ScenarioResult>> response =
-                restTemplate.exchange(
+        return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {});
-        return response.getBody();
     }
 
     @Override
-    public List<ScenarioRequest> getScenariosFromQueue(String username) {
-        String url = "%s/api/scenario/queue/%s".formatted(baseUrl, username);
-        ResponseEntity<List<ScenarioRequest>> response =
-                restTemplate.exchange(
+    public ResponseEntity<List<ScenarioRequest>> getScenarioFromQueue(
+            String username, String scenarioName) {
+        String url = "%s/api/scenario/queue/%s/%s"
+                .formatted(baseUrl, username, scenarioName);
+        return restTemplate.exchange(
                 url,
-                HttpMethod.POST,
+                HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {});
-        return response.getBody();
     }
 }
