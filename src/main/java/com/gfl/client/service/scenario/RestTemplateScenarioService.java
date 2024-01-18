@@ -50,7 +50,7 @@ public class RestTemplateScenarioService
                 .formatted(baseUrl, username, scenarioName);
         return restTemplate.exchange(
                 url,
-                HttpMethod.POST,
+                HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {});
     }
