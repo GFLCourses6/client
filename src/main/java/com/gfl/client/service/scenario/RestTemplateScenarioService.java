@@ -44,7 +44,17 @@ public class RestTemplateScenarioService
     }
 
     @Override
-    public ResponseEntity<List<ScenarioRequest>> getScenarioFromQueue(
+    public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(String username) {
+        String url = "%s/api/scenario/queue/%s".formatted(baseUrl, username);
+        return restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {});
+    }
+
+    @Override
+    public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(
             String username, String scenarioName) {
         String url = "%s/api/scenario/queue/%s/%s"
                 .formatted(baseUrl, username, scenarioName);

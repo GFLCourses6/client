@@ -11,5 +11,7 @@ public interface ScenarioService {
 
     ResponseEntity<Void> sendScenarios(List<ScenarioRequest> requests);
 
-    ResponseEntity<List<ScenarioRequest>> getScenarioFromQueue(String username, String scenarioName);
+    ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(String username);
+
+    ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(String username, String scenarioName);
 }
