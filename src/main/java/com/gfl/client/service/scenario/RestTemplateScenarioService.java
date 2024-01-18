@@ -22,6 +22,10 @@ public class RestTemplateScenarioService
 
     @Value("${worker.base.uri}")
     private String baseUrl;
+    @Value("${executor.service.auth.token.header.name}")
+    private String authTokenHeaderName;
+    @Value("${executor.service.auth.token.value}")
+    private String authTokenValue;
     private final RestTemplate restTemplate;
 
     public ResponseEntity<Void> sendScenarios(
@@ -29,6 +33,7 @@ public class RestTemplateScenarioService
         String uri = "%s/api/scenario/queue".formatted(baseUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(authTokenHeaderName, authTokenValue);
         return restTemplate.postForEntity(
                 uri, new HttpEntity<>(scenarios, headers), Void.class);
     }
@@ -36,10 +41,17 @@ public class RestTemplateScenarioService
     @Override
     public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(String username) {
         String url = "%s/api/result/%s".formatted(baseUrl, username);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(authTokenHeaderName, authTokenValue);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                null,
+                requestEntity,
                 new ParameterizedTypeReference<>() {});
     }
 
@@ -48,10 +60,17 @@ public class RestTemplateScenarioService
             String username, String scenarioName) {
         String url = "%s/api/scenario/queue/%s/%s"
                 .formatted(baseUrl, username, scenarioName);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(authTokenHeaderName, authTokenValue);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                null,
+                requestEntity,
                 new ParameterizedTypeReference<>() {});
     }
 }
