@@ -22,30 +22,26 @@ public class RestTemplateScenarioService
 
     @Value("${worker.base.uri}")
     private String baseUrl;
-    @Value("${executor.service.auth.token.header.name}")
-    private String authTokenHeaderName;
-    @Value("${executor.service.auth.token.value}")
-    private String authTokenValue;
+    @Value("${client.auth.token.value}")
+    private String clientAuthToken;
+
     private final RestTemplate restTemplate;
 
     public ResponseEntity<Void> sendScenarios(
             List<ScenarioRequest> scenarios) {
         String uri = "%s/api/scenario/queue".formatted(baseUrl);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(authTokenHeaderName, authTokenValue);
-        return restTemplate.postForEntity(
-                uri, new HttpEntity<>(scenarios, headers), Void.class);
+
+        var headers = getWorkerCommonHeaders();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
+        return restTemplate.postForEntity(uri, requestEntity, Void.class);
     }
 
     @Override
     public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(String username) {
         String url = "%s/api/result/%s".formatted(baseUrl, username);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(authTokenHeaderName, authTokenValue);
-
+        var headers = getWorkerCommonHeaders();
         HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(
@@ -61,10 +57,7 @@ public class RestTemplateScenarioService
         String url = "%s/api/scenario/queue/%s/%s"
                 .formatted(baseUrl, username, scenarioName);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(authTokenHeaderName, authTokenValue);
-
+        var headers = getWorkerCommonHeaders();
         HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(
@@ -72,5 +65,12 @@ public class RestTemplateScenarioService
                 HttpMethod.GET,
                 requestEntity,
                 new ParameterizedTypeReference<>() {});
+    }
+
+    private HttpHeaders getWorkerCommonHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(HttpHeaders.AUTHORIZATION, clientAuthToken);
+        return headers;
     }
 }
