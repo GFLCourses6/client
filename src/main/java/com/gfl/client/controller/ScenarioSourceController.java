@@ -16,7 +16,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/source")
+@RequestMapping("/scenario")
 public class ScenarioSourceController {
 
     private final RestTemplateScenarioService restTemplateScenarioService;
@@ -35,29 +35,26 @@ public class ScenarioSourceController {
         restTemplateScenarioService.sendScenarios(scenarios);
     }
 
-    @GetMapping("/username/{username}")
+    @GetMapping("/executed/{username}")
     public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(
             @NotBlank(message = "username can't be blank")
             @PathVariable("username") String username){
-        logger.debug("getExecutedScenarios {}", username);
         return restTemplateScenarioService.getExecutedScenarios(username);
     }
 
-    @GetMapping("/queue/username/{username}")
+    @GetMapping("/queue/{username}")
     public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(
             @NotBlank(message = "username can't be blank")
             @PathVariable("username")  String username){
-        logger.debug("getScenariosFromQueue {}", username);
         return restTemplateScenarioService.getScenariosFromQueue(username);
     }
 
-    @GetMapping("/queue/username/{username}/scenarioname/{scenarioName}")
+    @GetMapping("/queue/{username}/{scenarioName}")
     public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(
             @NotBlank(message = "username can't be blank")
             @PathVariable("username")String username,
             @NotBlank(message = "scenarioName can't be blank")
             @PathVariable("scenarioName")String scenarioName){
-        logger.debug("getScenariosFromQueue; username={}, scenarioName={}", username, scenarioName);
         return restTemplateScenarioService.getScenariosFromQueue(username, scenarioName);
     }
 
