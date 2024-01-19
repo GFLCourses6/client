@@ -70,7 +70,7 @@ public class RestTemplateScenarioService
     private HttpHeaders getWorkerCommonHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.AUTHORIZATION, clientAuthToken);
+        headers.add(HttpHeaders.AUTHORIZATION, "Token " + clientAuthToken);
         return headers;
     }
 }
