@@ -23,7 +23,6 @@ public class DefaultAsyncProxyTaskProcessor implements AsyncProxyQueueTaskProces
         this.proxySourceQueueHandler = proxySourceQueueHandler;
         this.proxySourceService = proxySourceService;
         this.lock = new ReentrantLock();
-        fillCommonQueue();
     }
 
     @Override
