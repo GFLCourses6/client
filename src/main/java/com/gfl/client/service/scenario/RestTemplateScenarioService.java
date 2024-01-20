@@ -22,24 +22,32 @@ public class RestTemplateScenarioService
 
     @Value("${worker.base.uri}")
     private String baseUrl;
+    @Value("${client.auth.token.value}")
+    private String clientAuthToken;
+
     private final RestTemplate restTemplate;
 
     public ResponseEntity<Void> sendScenarios(
             List<ScenarioRequest> scenarios) {
         String uri = "%s/api/scenario/queue".formatted(baseUrl);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return restTemplate.postForEntity(
-                uri, new HttpEntity<>(scenarios, headers), Void.class);
+
+        var headers = getWorkerCommonHeaders();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
+        return restTemplate.postForEntity(uri, requestEntity, Void.class);
     }
 
     @Override
     public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(String username) {
         String url = "%s/api/result/%s".formatted(baseUrl, username);
+
+        var headers = getWorkerCommonHeaders();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                null,
+                requestEntity,
                 new ParameterizedTypeReference<>() {});
     }
 
@@ -58,10 +66,21 @@ public class RestTemplateScenarioService
             String username, String scenarioName) {
         String url = "%s/api/scenario/queue/%s/%s"
                 .formatted(baseUrl, username, scenarioName);
+
+        var headers = getWorkerCommonHeaders();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                null,
+                requestEntity,
                 new ParameterizedTypeReference<>() {});
+    }
+
+    private HttpHeaders getWorkerCommonHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(HttpHeaders.AUTHORIZATION, "Token " + clientAuthToken);
+        return headers;
     }
 }
