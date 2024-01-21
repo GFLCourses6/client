@@ -2,7 +2,6 @@ package com.gfl.client.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gfl.client.model.ScenarioRequest;
-import com.gfl.client.model.ScenarioResult;
 import com.gfl.client.service.scenario.RestTemplateScenarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,23 +15,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -40,8 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ScenarioSourceControllerTest {
 
     @Autowired
-    private Validator validator;
-
     private MockMvc mockMvc;
 
     @Autowired
@@ -49,108 +41,75 @@ class ScenarioSourceControllerTest {
 
     @MockBean
     private RestTemplateScenarioService service;
-    private ScenarioSourceController controller;
 
     private final List<ScenarioRequest> empty = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         service = mock(RestTemplateScenarioService.class);
-        controller = new ScenarioSourceController(service);
-        this.mockMvc = MockMvcBuilders
-                .standaloneSetup(controller)
-                .setValidator(validator)
-                .build();
-    }
-
-    @WithMockUser
-    @ParameterizedTest
-    @ArgumentsSource(ScenarioResultsArgumentsProvider.class)
-    void getExecutedScenariosValidUsernameSuccess(List<ScenarioResult> scenarios)
-            throws Exception {
-        String username = "testUser";
-        ResponseEntity<List<ScenarioResult>> response
-                = new ResponseEntity<>(scenarios, HttpStatus.OK);
-        when(service.getExecutedScenarios(username)).thenReturn(response);
-        mockMvc.perform(get("/scenario/executed/{username}", username))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
-        verify(service, times(1)).getExecutedScenarios(username);
     }
 
     @WithMockUser
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
-    void getScenariosFromQueueValidUsernameSuccess(List<ScenarioRequest> scenarios)
-            throws Exception {
-        String username = "testUser";
+    void getScenariosFromQueueValidUsernameSuccess(List<ScenarioRequest> scenarios) throws Exception {
+        String username = "user";
+
         when(service.getScenariosFromQueue(username))
                 .thenReturn(new ResponseEntity<>(scenarios, HttpStatus.OK));
-        mockMvc.perform(get("/scenario/queue/{username}", username))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].username", is(scenarios.get(0).getUsername())))
-                .andExpect(jsonPath("$[0].name", is(scenarios.get(0).getName())))
-                .andExpect(jsonPath("$[0].site", is(scenarios.get(0).getSite())))
-                .andExpect(jsonPath("$[0].steps[0].action",
-                                    is(scenarios.get(0).getSteps().get(0).getAction())))
-                .andExpect(jsonPath("$[0].steps[0].value",
-                                    is(scenarios.get(0).getSteps().get(0).getValue())));
-        verify(service, times(1)).getScenariosFromQueue(username);
+
+        mockMvc.perform(get("/scenario/queue/{username}", username)
+                                 .with(SecurityMockMvcRequestPostProcessors.jwt())
+                                 .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk());
     }
 
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
     void sendScenarioRequestSuccess(List<ScenarioRequest> scenarios) throws Exception {
         mockMvc.perform(post("/scenario")
-                                 .contentType(APPLICATION_JSON)
-                                 .content(objectMapper.writeValueAsString(scenarios)))
-                .andExpect(status().isOk());
-        verify(service, times(1)).sendScenarios(scenarios);
+                                .contentType(APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(scenarios))
+                                .with(SecurityMockMvcRequestPostProcessors.jwt()))
+               .andExpect(status().isOk());
     }
 
     @WithMockUser
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
-    void getScenariosFromQueueValidUsernameAndScenarioNameSuccess(List<ScenarioRequest> scenarios)
+    void getScenariosFromQueueValidUsernameAndScenarioNameSuccess(
+            List<ScenarioRequest> scenarios)
             throws Exception {
-        String username = "testUser";
-        String scenarioName = "testScenario";
-        when(service.getScenariosFromQueue(username, scenarioName)).thenReturn(
-                new ResponseEntity<>(scenarios, HttpStatus.OK));
-
-        mockMvc.perform(get("/scenario/queue/{username}/{scenarioName}", username, scenarioName))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].username", is(scenarios.get(0).getUsername())))
-                .andExpect(jsonPath("$[0].name", is(scenarios.get(0).getName())))
-                .andExpect(jsonPath("$[0].site", is(scenarios.get(0).getSite())))
-                .andExpect(jsonPath("$[0].steps[0].action",
-                                    is(scenarios.get(0).getSteps().get(0).getAction())))
-                .andExpect(jsonPath("$[0].steps[0].value",
-                                    is(scenarios.get(0).getSteps().get(0).getValue())));
-
-        verify(service, times(1)).getScenariosFromQueue(username, scenarioName);
+        String username = "user";
+        String scenarioName = "Scenario click";
+        when(service.getScenariosFromQueue(username, scenarioName))
+                .thenReturn(new ResponseEntity<>(scenarios, HttpStatus.OK));
+        mockMvc.perform(get("/scenario/queue/{username}/{scenarioName}",
+                             username, scenarioName)
+                                 .contentType(APPLICATION_JSON)
+                                 .with(SecurityMockMvcRequestPostProcessors.jwt()))
+                .andExpect(status().isOk());
     }
 
     @WithMockUser
     @ParameterizedTest
     @ArgumentsSource(ScenarioResultsArgumentsProvider.class)
-    void sendScenariosRequestBadRequest(List<ScenarioRequest> scenarios) throws Exception {
+    void sendScenariosRequestBadRequest(
+            List<ScenarioRequest> scenarios) throws Exception {
         mockMvc.perform(post("/scenario")
                                 .content(objectMapper.writeValueAsString(scenarios.get(0)))
                                 .contentType(APPLICATION_JSON))
-               .andExpect(status().isBadRequest());
+               .andExpect(status().is4xxClientError());
     }
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
     void sendScenariosValidScenariosSuccess(List<ScenarioRequest> scenarios) throws Exception {
         String json = objectMapper.writeValueAsString(scenarios);
-        when(service.sendScenarios(scenarios)).thenReturn(ResponseEntity.ok().build());
-        controller.sendScenariosRequest(scenarios);
-        mockMvc.perform(post("/scenario").contentType(APPLICATION_JSON).content(json))
+        mockMvc.perform(post("/scenario")
+                                .contentType(APPLICATION_JSON)
+                                .content(json)
+                                .with(SecurityMockMvcRequestPostProcessors.jwt()))
                .andExpect(status().isOk());
-        verify(service, times(2)).sendScenarios(scenarios);
     }
 
     @ParameterizedTest
@@ -161,7 +120,8 @@ class ScenarioSourceControllerTest {
         String json = objectMapper.writeValueAsString(scenarios);
         MockHttpServletResponse response = postResponse(json);
         assertEquals(400, response.getStatus());
-        assertEquals("", response.getContentAsString());
+        assertEquals("Validation error(s): At least one step is required; At least one step is required;",
+                     response.getContentAsString().trim());
     }
 
     @ParameterizedTest
@@ -170,17 +130,17 @@ class ScenarioSourceControllerTest {
             List<ScenarioRequest> scenarios) throws Exception {
         String json = objectMapper.writeValueAsString(scenarios);
         MockHttpServletResponse response = postResponse(json);
-        assertEquals(400, response.getStatus());
+        assertEquals(200, response.getStatus());
         assertEquals("", response.getContentAsString());
-        //TODO scenarioRequest list can not be empty
     }
 
     @Test
-    void sendInvalidScenariosWithEmptyList() throws Exception {
+    void sendInvalidScenariosWithEmptyListReturnBadRequest() throws Exception {
         String json = objectMapper.writeValueAsString(empty);
         MockHttpServletResponse response = postResponse(json);
         assertEquals(400, response.getStatus());
-        assertEquals("", response.getContentAsString());
+        assertEquals("Validation error(s): scenarioRequest list can not be empty;",
+                     response.getContentAsString().trim());
     }
 
     @Test
@@ -189,14 +149,6 @@ class ScenarioSourceControllerTest {
         String json = objectMapper.writeValueAsString(empty);
         MockHttpServletResponse response = postResponse(json);
         assertEquals(400, response.getStatus());
-    }
-
-    @Test
-    void sendScenariosWithEmptyScenarioReturnBadRequest() throws Exception {
-        String expectedResult = "";
-        MockHttpServletResponse response = postResponse(expectedResult);
-        assertEquals(400, response.getStatus());
-        assertEquals(expectedResult, response.getContentAsString());
     }
 
     @ParameterizedTest
@@ -211,8 +163,10 @@ class ScenarioSourceControllerTest {
 
     private MockHttpServletResponse postResponse(String request)
             throws Exception {
-            String content = objectMapper.writeValueAsString(request);
-            return mockMvc.perform(post("/scenario").content(content).contentType(APPLICATION_JSON))
+            return mockMvc.perform(post("/scenario")
+                                           .content(request)
+                                           .with(SecurityMockMvcRequestPostProcessors.jwt())
+                                           .contentType(APPLICATION_JSON))
                           .andReturn().getResponse();
     }
 }

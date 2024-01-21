@@ -1,4 +1,4 @@
-name: Build and deploy JAR app to Azure Web App - gfl-qa-client pull_request
+name: Build JAR app to Azure Web App - gfl-qa-client pull_request
 
 on:
   pull_request:

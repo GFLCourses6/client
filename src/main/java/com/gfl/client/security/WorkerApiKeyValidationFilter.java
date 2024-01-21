@@ -39,8 +39,8 @@ public class WorkerApiKeyValidationFilter extends OncePerRequestFilter {
                         "username", null, getWorkerAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 
     private Collection<? extends GrantedAuthority> getWorkerAuthorities() {

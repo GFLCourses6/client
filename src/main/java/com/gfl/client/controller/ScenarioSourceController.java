@@ -6,9 +6,10 @@ import com.gfl.client.service.scenario.RestTemplateScenarioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,17 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
+
 @Validated
 @RestController
 @RequestMapping("/scenario")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ScenarioSourceController {
 
     private final RestTemplateScenarioService restTemplateScenarioService;
 
     private final Logger logger = LoggerFactory.getLogger(ScenarioSourceController.class);
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public void sendScenariosRequest(
             @RequestBody @NotEmpty(message = "scenarioRequest list can not be empty")
             List<@Valid ScenarioRequest> scenarios){
@@ -38,21 +41,21 @@ public class ScenarioSourceController {
         restTemplateScenarioService.sendScenarios(scenarios);
     }
 
-    @GetMapping("/executed/{username}")
+    @GetMapping(value = "/executed/{username}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(
             @NotBlank(message = "username can't be blank")
             @PathVariable("username") String username){
         return restTemplateScenarioService.getExecutedScenarios(username);
     }
 
-    @GetMapping("/queue/{username}")
+    @GetMapping(value = "/queue/{username}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueueByUsername(
             @NotBlank(message = "username can't be blank")
             @PathVariable("username")  String username){
         return restTemplateScenarioService.getScenariosFromQueue(username);
     }
 
-    @GetMapping("/queue/{username}/{scenarioName}")
+    @GetMapping(value = "/queue/{username}/{scenarioName}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueueByUsernameAndScenarioName(
             @NotBlank(message = "username can't be blank")
             @PathVariable("username")String username,
