@@ -20,5 +20,5 @@ public class StepResult {
     private String executionMessage;
     private ScenarioResult scenarioResult;
     private ExecutionStatus executionStatus;
-    private Instant createdDate = Instant.now();
+    private Instant createdDate;
 }

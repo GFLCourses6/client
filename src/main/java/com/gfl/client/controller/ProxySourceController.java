@@ -1,7 +1,6 @@
 package com.gfl.client.controller;
 
 import com.gfl.client.model.ProxyConfigHolder;
-import com.gfl.client.service.proxy.queue.DefaultAsyncProxyTaskProcessor;
 import com.gfl.client.service.proxy.queue.ProxySourceQueueHandler;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProxySourceController {
 
     private final ProxySourceQueueHandler proxySourceQueueHandler;
-    private final Logger logger = LoggerFactory.getLogger(DefaultAsyncProxyTaskProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(ProxySourceController.class);
 
     @PostMapping
     public ResponseEntity<Void> addProxy(Authentication authentication,
