@@ -7,8 +7,6 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -87,35 +85,13 @@ class ProxyConfigHolderTest {
         assertEquals(proxyConfigHolder, proxyConfigHolder1);
     }
 
-    @ParameterizedTest
-    @MethodSource("getDifferentProxyConfigHolders")
+    @Test
     @DisplayName("Test equality between proxyConfigHolder objects")
-    void testEqualsFailed(ProxyConfigHolder otherConfigHolder) {
+    void testEqualsFailed() {
+        ProxyConfigHolder otherConfigHolder = getProxyConfigHolder("hostname2", 8082, "username2" , "password2");
         assertNotEquals(proxyConfigHolder, otherConfigHolder);
-    }
-
-    static Stream<ProxyConfigHolder> getDifferentProxyConfigHolders() {
-        ProxyConfigHolder configHolder1 = new ProxyConfigHolder();
-        ProxyNetworkConfig config1 = new ProxyNetworkConfig();
-        config1.setHostname("hostname1");
-        config1.setPort(8081);
-        ProxyCredentials credentials1 = new ProxyCredentials();
-        credentials1.setUsername("username1");
-        credentials1.setPassword("password1");
-        configHolder1.setProxyCredentials(credentials1);
-        configHolder1.setProxyNetworkConfig(config1);
-
-        ProxyConfigHolder configHolder2 = new ProxyConfigHolder();
-        ProxyNetworkConfig config2 = new ProxyNetworkConfig();
-        config2.setHostname("hostname2");
-        config2.setPort(8082);
-        ProxyCredentials credentials2 = new ProxyCredentials();
-        credentials2.setUsername("username2");
-        credentials2.setPassword("password2");
-        configHolder2.setProxyCredentials(credentials2);
-        configHolder2.setProxyNetworkConfig(config2);
-
-        return Stream.of(configHolder1, configHolder2);
+        ProxyConfigHolder otherConfigHolder1 = getProxyConfigHolder("hostname", 8080, "username" , "password3");
+        assertNotEquals(proxyConfigHolder, otherConfigHolder1);
     }
 
     @Test
@@ -187,17 +163,32 @@ class ProxyConfigHolderTest {
 
         // Verify violation for null username
         ConstraintViolation<ProxyConfigHolder> usernameViolation = violations.stream()
-                .filter(v -> v.getPropertyPath().toString().equals("proxyCredentials.username")) // Verifies specific violations for username and password using property paths.
+                .filter(v -> "proxyCredentials.username".equals(v.getPropertyPath().toString())) // Verifies specific violations for username and password using property paths.
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for null username not found")); // Throws AssertionError if expected violations are not found.
         assertEquals("Username must not be blank", usernameViolation.getMessage());
 
         // Verify violation for null password
         ConstraintViolation<ProxyConfigHolder> passwordViolation = violations.stream()
-                .filter(v -> v.getPropertyPath().toString().equals("proxyCredentials.password"))
+                .filter(v -> "proxyCredentials.password".equals(v.getPropertyPath().toString()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for null password not found"));
         assertEquals("Password must not be blank", passwordViolation.getMessage());
+    }
+
+    private static Stream<Object[]> invalidProxyConfigHolder() {
+        return Stream.of(
+                new Object[] { new ProxyConfigHolder(null, new ProxyCredentials("username", "password")), "proxy network configuration cannot be null" },
+                new Object[] { new ProxyConfigHolder(new ProxyNetworkConfig("hostname", 8080), new ProxyCredentials(null, "password")), "username cannot be null" },
+                new Object[] { new ProxyConfigHolder(new ProxyNetworkConfig("hostname", 8080), new ProxyCredentials("username", "")), "password cannot be blank" }
+        );
+    }
+
+    private static Stream<ProxyConfigHolder> validProxyConfigHolder() {
+        return Stream.of(
+                new ProxyConfigHolder(new ProxyNetworkConfig("hostname", 8080), new ProxyCredentials("username", "password"))
+                // Add more valid test cases as needed
+        );
     }
 
 }
