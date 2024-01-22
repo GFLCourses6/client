@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,10 +21,12 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class WorkerApiKeyValidationFilter extends OncePerRequestFilter {
 
     @Value("${executor.service.auth.token.value}")
     private String workerApiKey;
+    private RsaManager rsaManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -33,7 +37,10 @@ public class WorkerApiKeyValidationFilter extends OncePerRequestFilter {
         if (tokenHeader != null && tokenHeader.startsWith("Token ")) {
             String token = tokenHeader.substring(6);
 
-            if (workerApiKey.equals(token)) {
+            rsaManager.initFromStrings();
+            String decryptedToken = rsaManager.decrypt(token);
+
+            if (workerApiKey.equals(decryptedToken)) {
                 // set Authentication in Security Context with role `WORKER`
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         "username", null, getWorkerAuthorities());
