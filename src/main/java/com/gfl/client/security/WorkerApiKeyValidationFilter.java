@@ -37,7 +37,6 @@ public class WorkerApiKeyValidationFilter extends OncePerRequestFilter {
         if (tokenHeader != null && tokenHeader.startsWith("Token ")) {
             String token = tokenHeader.substring(6);
 
-            rsaManager.initFromStrings();
             String decryptedToken = rsaManager.decrypt(token);
 
             if (workerApiKey.equals(decryptedToken)) {

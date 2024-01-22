@@ -1,6 +1,7 @@
 package com.gfl.client.security;
 
 import com.gfl.client.exception.RsaManagerInitializationException;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ public class RsaManager {
 
     private static final Logger logger = LoggerFactory.getLogger(RsaManager.class);
 
+    @PostConstruct
     public void initFromStrings() {
         try {
             X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(publicKeyString));
