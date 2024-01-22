@@ -2,6 +2,7 @@ package com.gfl.client.service.scenario;
 
 import com.gfl.client.model.ScenarioRequest;
 import com.gfl.client.model.ScenarioResult;
+import com.gfl.client.security.RsaManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,12 +17,15 @@ import java.util.List;
 public class RestTemplateScenarioService
         implements ScenarioService {
 
+
+
     @Value("${worker.base.uri}")
     private String baseUrl;
     @Value("${client.auth.token.value}")
     private String clientAuthToken;
 
     private final RestTemplate restTemplate;
+    private RsaManager rsaManager;
 
     public ResponseEntity<Void> sendScenarios(String username,
                                               List<ScenarioRequest> scenarios) {
@@ -81,7 +85,9 @@ public class RestTemplateScenarioService
     private HttpHeaders getWorkerCommonHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.AUTHORIZATION, "Token " + clientAuthToken);
+        rsaManager.initFromStrings();
+        String encryptedClientAuthToken = rsaManager.encrypt(clientAuthToken);
+        headers.add(HttpHeaders.AUTHORIZATION, "Token " + encryptedClientAuthToken);
         return headers;
     }
 
