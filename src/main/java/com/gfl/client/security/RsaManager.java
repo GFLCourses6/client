@@ -15,7 +15,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -24,9 +26,12 @@ import java.util.Base64;
 public class RsaManager {
 
     private PublicKey publicKey;
+    private PrivateKey privateKey;
 
     @Value("${public.key}")
     private String publicKeyString;
+    @Value("${private.key}")
+    private String privateKeyString;
 
     private static final Logger logger = LoggerFactory.getLogger(RsaManager.class);
 
@@ -34,8 +39,10 @@ public class RsaManager {
     public void initFromStrings() {
         try {
             X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(publicKeyString));
+            PKCS8EncodedKeySpec keySpecPrivate = new PKCS8EncodedKeySpec(decode(privateKeyString));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             publicKey = keyFactory.generatePublic(keySpecPublic);
+            privateKey = keyFactory.generatePrivate(keySpecPrivate);
 
         } catch (Exception e) {
             logger.error("Error during initialization from strings", e);
@@ -65,7 +72,7 @@ public class RsaManager {
         try {
             byte[] encryptedBytes = decode(encryptedMessage);
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.DECRYPT_MODE, publicKey);
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] decryptedMessage = cipher.doFinal(encryptedBytes);
             return new String(decryptedMessage, "UTF-8");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
