@@ -78,8 +78,15 @@ class ProxyCredentialsTest {
     @Test
     @DisplayName("Test hashCode method for ProxyCredentials object")
     void testHashCode() {
-        int expectedHashCode = proxyCredentials.hashCode();
-        assertEquals(expectedHashCode, proxyCredentials.hashCode());
+        // Consistency: Multiple invocations should return the same hash code
+        int firstHashCode = proxyCredentials.hashCode();
+        int secondHashCode = proxyCredentials.hashCode();
+        assertEquals(firstHashCode, secondHashCode);
+
+        // Equality: If two objects are equal, their hash codes should be the same
+        ProxyCredentials equalCredentials = new ProxyCredentials("username1", "password1");
+        assertEquals(proxyCredentials, equalCredentials);
+        assertEquals(proxyCredentials.hashCode(), equalCredentials.hashCode());
     }
 
     @Test
@@ -128,23 +135,20 @@ class ProxyCredentialsTest {
     @Test
     @DisplayName("Test validation fails for more size than should be in ProxyCredentials")
     void testValidationFailsForSizeMoreProxyCredentials() {
-        ProxyCredentials credentials = new ProxyCredentials("ThisIsAHostnameWithMoreThanFiftyCharactersInThisSentence", "t#9mBc!RvXzP7sHqGjUyLxKvT1iFwOoD2eA3nZ4rY5e6d7u8i9t0yT1o2a3l4l5e6n7g8a9r0p!i@l5434t#9mBc!RvXzP7sHqGjUyLxKvT1iFwOoD2eA3nZ4rY5e6d7u8i9t0yT1o2a3l4l5e6n7g8a9r0p!i@l5434");
+        ProxyCredentials credentials = new ProxyCredentials("a".repeat(51),
+                "a".repeat(101));
         Set<ConstraintViolation<ProxyCredentials>> violations = validator.validate(credentials);
 
         assertEquals(2, violations.size());
 
         ConstraintViolation<ProxyCredentials> usernameViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("username");
-                })
+                .filter(v -> v.getPropertyPath().toString().equals("username"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for 50+ hostname letters"));
         assertEquals("Username must be between 3 and 50 characters", usernameViolation.getMessage());
 
         ConstraintViolation<ProxyCredentials> passwordViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("password");
-                })
+                .filter(v -> v.getPropertyPath().toString().equals("password"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for password more than 65535"));
         assertEquals("Password must be between 6 and 100 characters", passwordViolation.getMessage());
@@ -172,5 +176,4 @@ class ProxyCredentialsTest {
                 .orElseThrow(() -> new AssertionError("Expected violation for port more than 65535"));
         assertEquals("Password must be between 6 and 100 characters", passwordViolation.getMessage());
     }
-
 }
