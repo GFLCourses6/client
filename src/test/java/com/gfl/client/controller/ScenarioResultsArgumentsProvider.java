@@ -21,9 +21,9 @@ public class ScenarioResultsArgumentsProvider
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
         Step step = new Step("click", "button");
         StepResult stepResult = new StepResult(1L,
-                                               step,
+                                               "action",
+                                               "value",
                                                "Execution successful",
-                                               null,
                                                ExecutionStatus.SUCCESS,
                                                Instant.now());
         return Stream.of(Arguments.of(Arrays.asList(new ScenarioResult(1L,

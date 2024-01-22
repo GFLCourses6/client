@@ -6,11 +6,7 @@ import com.gfl.client.security.RsaManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,12 +27,13 @@ public class RestTemplateScenarioService
     private final RestTemplate restTemplate;
     private RsaManager rsaManager;
 
-    public ResponseEntity<Void> sendScenarios(
-            List<ScenarioRequest> scenarios) {
+    public ResponseEntity<Void> sendScenarios(String username,
+                                              List<ScenarioRequest> scenarios) {
+        scenarios.forEach(scenario -> setUser(scenario, username));
         String uri = "%s/api/scenario/queue".formatted(baseUrl);
 
         var headers = getWorkerCommonHeaders();
-        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(scenarios, headers);
 
         return restTemplate.postForEntity(uri, requestEntity, Void.class);
     }
@@ -58,10 +55,14 @@ public class RestTemplateScenarioService
     @Override
     public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(String username) {
         String url = "%s/api/scenario/queue/%s".formatted(baseUrl, username);
+
+        var headers = getWorkerCommonHeaders();
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                null,
+                requestEntity,
                 new ParameterizedTypeReference<>() {});
     }
 
@@ -88,5 +89,9 @@ public class RestTemplateScenarioService
         String encryptedClientAuthToken = rsaManager.encrypt(clientAuthToken);
         headers.add(HttpHeaders.AUTHORIZATION, "Token " + encryptedClientAuthToken);
         return headers;
+    }
+
+    private void setUser(ScenarioRequest scenarioRequest, String username) {
+        scenarioRequest.setUsername(username);
     }
 }

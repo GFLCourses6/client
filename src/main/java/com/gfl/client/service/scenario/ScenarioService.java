@@ -9,7 +9,7 @@ import java.util.List;
 public interface ScenarioService {
     ResponseEntity<List<ScenarioResult>> getExecutedScenarios(String username);
 
-    ResponseEntity<Void> sendScenarios(List<ScenarioRequest> requests);
+    ResponseEntity<Void> sendScenarios(String username, List<ScenarioRequest> scenarios);
 
     ResponseEntity<List<ScenarioRequest>> getScenariosFromQueue(String username);
 
