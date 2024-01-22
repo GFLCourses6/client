@@ -18,6 +18,6 @@ public class ScenarioResult {
     private Long id;
     private String name;
     private String site;
-    private String createdBy;
+    private String username;
     private List<StepResult> stepResults;
 }

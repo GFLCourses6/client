@@ -30,7 +30,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc()
+@AutoConfigureMockMvc
+@WithMockUser(username = "ivan")
 class ScenarioSourceControllerTest {
 
     @Autowired
@@ -49,7 +50,6 @@ class ScenarioSourceControllerTest {
         service = mock(RestTemplateScenarioService.class);
     }
 
-    @WithMockUser
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
     void getScenariosFromQueueValidUsernameSuccess(List<ScenarioRequest> scenarios) throws Exception {
@@ -74,7 +74,6 @@ class ScenarioSourceControllerTest {
                .andExpect(status().isOk());
     }
 
-    @WithMockUser
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
     void getScenariosFromQueueValidUsernameAndScenarioNameSuccess(
@@ -91,7 +90,6 @@ class ScenarioSourceControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser
     @ParameterizedTest
     @ArgumentsSource(ScenarioResultsArgumentsProvider.class)
     void sendScenariosRequestBadRequest(
@@ -101,6 +99,7 @@ class ScenarioSourceControllerTest {
                                 .contentType(APPLICATION_JSON))
                .andExpect(status().is4xxClientError());
     }
+
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
     void sendScenariosValidScenariosSuccess(List<ScenarioRequest> scenarios) throws Exception {
