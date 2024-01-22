@@ -1,10 +1,6 @@
 package com.gfl.client.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 
@@ -16,9 +12,9 @@ import java.time.Instant;
 public class StepResult {
 
     private Long id;
-    private Step step;
+    private String action;
+    private String value;
     private String executionMessage;
-    private ScenarioResult scenarioResult;
     private ExecutionStatus executionStatus;
     private Instant createdDate;
 }

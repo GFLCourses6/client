@@ -15,14 +15,12 @@ public class ScenariosArgumentsProvider
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-        return Stream.of(Arguments.of(Arrays.asList(new ScenarioRequest("user",
-                                                                        "Scenario click",
+        return Stream.of(Arguments.of(Arrays.asList(new ScenarioRequest("Scenario click",
                                                                         "https://google.com",
                                                                         List.of(new StepRequest(
                                                                                 "click",
                                                                                 "button"))),
                                                     new ScenarioRequest(
-                                                            "anotherUser",
                                                             "Scenario sleep",
                                                             "https://github.com",
                                                             List.of(new StepRequest(

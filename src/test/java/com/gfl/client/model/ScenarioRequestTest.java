@@ -28,7 +28,7 @@ class ScenarioRequestTest {
         scenarioRequest.setSite("https://example.com");
         scenarioRequest.setSteps(List.of(new StepRequest("click", "button")));
         Set<ConstraintViolation<ScenarioRequest>> violations = validator.validate(scenarioRequest);
-        assertEquals(1, violations.size());
+        assertEquals(0, violations.size());
     }
 
     @ParameterizedTest
@@ -42,12 +42,13 @@ class ScenarioRequestTest {
         List<StepRequest> steps = Collections.singletonList(new StepRequest("click", "button"));
         List<StepRequest> step = Collections.singletonList(new StepRequest(null, null));
         return Stream.of(
-                new Object[]{new ScenarioRequest(), 4},
-                new Object[]{new ScenarioRequest("user","Scenario",  "https://example.com", steps), 0},
-                new Object[]{new ScenarioRequest("user","", "https://example.com", steps), 2},
-                new Object[]{new ScenarioRequest("user","Scenario", "", steps), 2},
-                new Object[]{new ScenarioRequest("user","Scenario", "https://example.com", step), 2},
-                new Object[]{new ScenarioRequest("user","Scenario", "", new ArrayList<>()), 3}
+                new Object[]{new ScenarioRequest(), 3},
+                new Object[]{new ScenarioRequest("Scenario",  "https://example.com", steps), 0},
+                new Object[]{new ScenarioRequest("username", "Scenario",  "https://example.com", steps), 1},
+                new Object[]{new ScenarioRequest("", "https://example.com", steps), 2},
+                new Object[]{new ScenarioRequest("Scenario", "", steps), 2},
+                new Object[]{new ScenarioRequest("Scenario", "https://example.com", step), 2},
+                new Object[]{new ScenarioRequest("Scenario", "", new ArrayList<>()), 3}
         );
     }
 }
