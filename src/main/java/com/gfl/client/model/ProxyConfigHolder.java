@@ -2,13 +2,9 @@ package com.gfl.client.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProxyConfigHolder {
 
     @Valid
@@ -17,4 +13,13 @@ public class ProxyConfigHolder {
 
     @Valid
     private ProxyCredentials proxyCredentials;
+
+    public ProxyConfigHolder(){}
+
+    public ProxyConfigHolder(
+            ProxyNetworkConfig proxyNetworkConfig,
+            ProxyCredentials proxyCredentials) {
+        this.proxyNetworkConfig = proxyNetworkConfig;
+        this.proxyCredentials = proxyCredentials;
+    }
 }
