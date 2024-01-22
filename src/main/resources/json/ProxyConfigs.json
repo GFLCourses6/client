@@ -1,0 +1,42 @@
+[
+  {
+    "proxyNetworkConfig": {
+      "hostname": "193.42.225.12",
+      "port": 6503
+    },
+    "proxyCredentials": {
+      "username": "ixfkiyxf",
+      "password": "0v2ypvysubnt"
+    }
+  },
+  {
+    "proxyNetworkConfig": {
+      "hostname": "119.42.39.191",
+      "port": 5819
+    },
+    "proxyCredentials": {
+      "username": "ixfkiyxf",
+      "password": "0v2ypvysubnt"
+    }
+  },
+  {
+    "proxyNetworkConfig": {
+      "hostname": "103.101.90.97",
+      "port": 6362
+    },
+    "proxyCredentials": {
+      "username": "ixfkiyxf",
+      "password": "0v2ypvysubnt"
+    }
+  },
+  {
+    "proxyNetworkConfig": {
+      "hostname": "104.238.10.147",
+      "port": 6093
+    },
+    "proxyCredentials": {
+      "username": "ixfkiyxf",
+      "password": "0v2ypvysubnt"
+    }
+  }
+]

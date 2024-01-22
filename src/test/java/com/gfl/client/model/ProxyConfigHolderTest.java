@@ -121,8 +121,16 @@ class ProxyConfigHolderTest {
     @Test
     @DisplayName("Test hashCode method for proxyConfigHolder object")
     void testHashCode() {
-        int expected = proxyConfigHolder.hashCode();
-        assertEquals(expected, proxyConfigHolder.hashCode());
+        ProxyConfigHolder proxyConfigHolder1 = getProxyConfigHolder("hostname", 8080, "username" , "password");
+        ProxyConfigHolder proxyConfigHolder2 = getProxyConfigHolder("hostname", 8080, "username" , "password");
+
+        assertEquals(proxyConfigHolder1, proxyConfigHolder2);
+        assertEquals(proxyConfigHolder1.hashCode(), proxyConfigHolder2.hashCode());
+    }
+
+
+    private static ProxyConfigHolder getProxyConfigHolder(String hostname, Integer port, String username,String password){
+        return new ProxyConfigHolder(new ProxyNetworkConfig(hostname, port), new ProxyCredentials(username, password));
     }
 
     @Test
