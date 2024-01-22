@@ -30,12 +30,14 @@ public class ScenarioResultsArgumentsProvider
                                                                        "Scenario click",
                                                                        "https://google.com",
                                                                        "user",
+                                                                       "proxy",
                                                                        singletonList(
                                                                                stepResult)),
                                                     new ScenarioResult(1L,
                                                                        "Scenario sleep",
                                                                        "https://google.com",
                                                                        "admin",
+                                                                       "proxy",
                                                                        singletonList(
                                                                                stepResult)))));
     }
