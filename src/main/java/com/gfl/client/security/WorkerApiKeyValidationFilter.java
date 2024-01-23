@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,7 +25,8 @@ public class WorkerApiKeyValidationFilter extends OncePerRequestFilter {
 
     @Value("${executor.service.auth.token.value}")
     private String workerApiKey;
-    private RsaManager rsaManager;
+
+    private final RsaManager rsaManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
