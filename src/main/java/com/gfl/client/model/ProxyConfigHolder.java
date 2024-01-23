@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SingleUseField // only useTimes or useAlways in the request
+@SingleUseField
 public class ProxyConfigHolder {
 
     @Valid
