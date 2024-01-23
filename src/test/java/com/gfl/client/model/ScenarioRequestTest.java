@@ -25,7 +25,7 @@ class ScenarioRequestTest {
     void validateValidScenarioRequest() {
         ScenarioRequest scenarioRequest = new ScenarioRequest();
         scenarioRequest.setName("Scenario");
-        scenarioRequest.setSite("http://example.com");
+        scenarioRequest.setSite("https://example.com");
         scenarioRequest.setSteps(List.of(new StepRequest("click", "button")));
         Set<ConstraintViolation<ScenarioRequest>> violations = validator.validate(scenarioRequest);
         assertEquals(0, violations.size());
@@ -43,7 +43,8 @@ class ScenarioRequestTest {
         List<StepRequest> step = Collections.singletonList(new StepRequest(null, null));
         return Stream.of(
                 new Object[]{new ScenarioRequest(), 3},
-                new Object[]{new ScenarioRequest("Scenario", "https://example.com", steps), 0},
+                new Object[]{new ScenarioRequest("Scenario",  "https://example.com", steps), 0},
+                new Object[]{new ScenarioRequest("username", "Scenario",  "https://example.com", steps), 1},
                 new Object[]{new ScenarioRequest("", "https://example.com", steps), 2},
                 new Object[]{new ScenarioRequest("Scenario", "", steps), 2},
                 new Object[]{new ScenarioRequest("Scenario", "https://example.com", step), 2},

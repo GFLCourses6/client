@@ -1,6 +1,7 @@
 package com.gfl.client.config;
 
 import com.gfl.client.security.JwtAuthConverter;
+import com.gfl.client.security.WorkerApiKeyValidationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,19 +20,27 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     private final JwtAuthConverter jwtAuthConverter;
+    private final WorkerApiKeyValidationFilter workerApiKeyValidationFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.anyRequest().authenticated()
-                )
-                .oauth2ResourceServer(oauth ->
-                        oauth.jwt(
-                                jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthConverter)
-                        )
-                );
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+            throws Exception {
+        http.addFilterBefore(workerApiKeyValidationFilter,
+                                 UsernamePasswordAuthenticationFilter.class)
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("swagger-ui/**",
+                                         "/swagger-ui.html",
+                                         "/v3/api-docs/**",
+                                         "/v3/api-docs/swagger-config",
+                                         "/swagger-ui/index.html")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .oauth2ResourceServer(oauth -> oauth.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(
+                        jwtAuthConverter)));
         return http.build();
     }
 }

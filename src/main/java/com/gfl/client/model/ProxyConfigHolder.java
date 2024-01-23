@@ -1,10 +1,17 @@
 package com.gfl.client.model;
 
+import com.gfl.client.validation.SingleUseField;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SingleUseField
 public class ProxyConfigHolder {
 
     @Valid
@@ -14,12 +21,12 @@ public class ProxyConfigHolder {
     @Valid
     private ProxyCredentials proxyCredentials;
 
-    public ProxyConfigHolder(){}
+    @Min(value = 1, message = "useTimes can't be lower than 1")
+    private Long useTimes;
 
-    public ProxyConfigHolder(
-            ProxyNetworkConfig proxyNetworkConfig,
-            ProxyCredentials proxyCredentials) {
-        this.proxyNetworkConfig = proxyNetworkConfig;
-        this.proxyCredentials = proxyCredentials;
+    private boolean useAlways;
+
+    public void countDownUseTimes() {
+        useTimes--;
     }
 }

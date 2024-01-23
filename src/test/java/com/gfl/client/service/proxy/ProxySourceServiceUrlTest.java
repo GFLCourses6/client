@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource(properties = "proxy.source.type=http")
+@TestPropertySource(properties = "proxy.source.type=url")
 public class ProxySourceServiceUrlTest {
 
     @Autowired
@@ -22,7 +22,5 @@ public class ProxySourceServiceUrlTest {
     public void testFileProxySourceService() {
         assertInstanceOf(ProxySourceServiceUrl.class, proxySourceService);
     }
-
-    // todo: add tests for ProxySourceServiceUrl
 }
 
