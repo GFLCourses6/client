@@ -81,6 +81,16 @@ class ProxyNetworkConfigTest {
     void testHashCode() {
         int expected = proxyNetworkConfig.hashCode();
         assertEquals(expected, proxyNetworkConfig.hashCode());
+
+        // Consistency: Multiple invocations should return the same hash code
+        int firstHashCode = proxyNetworkConfig.hashCode();
+        int secondHashCode = proxyNetworkConfig.hashCode();
+        assertEquals(firstHashCode, secondHashCode);
+
+        // Equality: If two objects are equal, their hash codes should be the same
+        ProxyNetworkConfig equalNetworkConfig = new ProxyNetworkConfig("hostname", 8080);
+        assertEquals(proxyNetworkConfig, equalNetworkConfig);
+        assertEquals(proxyNetworkConfig.hashCode(), equalNetworkConfig.hashCode());
     }
 
     @Test
