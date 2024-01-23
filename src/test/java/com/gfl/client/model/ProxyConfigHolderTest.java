@@ -119,7 +119,7 @@ class ProxyConfigHolderTest {
     }
 
     @Test
-    @DisplayName("Test equality and hashCode for   ProxyConfigHolder objects with the same values")
+    @DisplayName("Test equality and hashCode for ProxyConfigHolder objects with the same values")
     void testEqualsAndHashCode() {
         ProxyConfigHolder proxyConfigHolder1 = new ProxyConfigHolder();
         ProxyNetworkConfig config = new ProxyNetworkConfig();
@@ -144,7 +144,6 @@ class ProxyConfigHolderTest {
 
         Set<ConstraintViolation<ProxyConfigHolder>> violations = validator.validate(configHolder);
 
-        // Assert violations for null proxyNetworkConfig
         assertEquals(1, violations.size());
         ConstraintViolation<ProxyConfigHolder> violation = violations.iterator().next();
         assertEquals("proxy network configuration can't be null", violation.getMessage());
@@ -154,21 +153,17 @@ class ProxyConfigHolderTest {
     @Test
     @DisplayName("Test validation fails for invalid proxyCredentials")
     void testValidationFailsForInvalidProxyCredentials() {
-        ProxyConfigHolder configHolder = new ProxyConfigHolder(proxyNetworkConfig, new ProxyCredentials(null, null)); // Assuming null values are invalid
+        ProxyConfigHolder configHolder = new ProxyConfigHolder(proxyNetworkConfig, new ProxyCredentials(null, null));
 
         Set<ConstraintViolation<ProxyConfigHolder>> violations = validator.validate(configHolder);
+        assertEquals(2, violations.size());
 
-        // Asserts the total number of violations -> Assert violations for invalid proxyCredentials
-        assertEquals(2, violations.size()); // Two violations for null username and password
-
-        // Verify violation for null username
         ConstraintViolation<ProxyConfigHolder> usernameViolation = violations.stream()
-                .filter(v -> "proxyCredentials.username".equals(v.getPropertyPath().toString())) // Verifies specific violations for username and password using property paths.
+                .filter(v -> "proxyCredentials.username".equals(v.getPropertyPath().toString()))
                 .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected violation for null username not found")); // Throws AssertionError if expected violations are not found.
+                .orElseThrow(() -> new AssertionError("Expected violation for null username not found"));
         assertEquals("Username must not be blank", usernameViolation.getMessage());
 
-        // Verify violation for null password
         ConstraintViolation<ProxyConfigHolder> passwordViolation = violations.stream()
                 .filter(v -> "proxyCredentials.password".equals(v.getPropertyPath().toString()))
                 .findFirst()
@@ -187,8 +182,6 @@ class ProxyConfigHolderTest {
     private static Stream<ProxyConfigHolder> validProxyConfigHolder() {
         return Stream.of(
                 new ProxyConfigHolder(new ProxyNetworkConfig("hostname", 8080), new ProxyCredentials("username", "password"))
-                // Add more valid test cases as needed
         );
     }
-
 }

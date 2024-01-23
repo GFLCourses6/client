@@ -13,6 +13,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProxyNetworkConfigTest {
     private ProxyNetworkConfig proxyNetworkConfig;
@@ -121,17 +122,13 @@ class ProxyNetworkConfigTest {
         assertEquals(2, violations.size());
 
         ConstraintViolation<ProxyNetworkConfig> hostnameViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("hostname");
-                })
+                .filter(v -> v.getPropertyPath().toString().equals("hostname"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for null hostname not found"));
         assertEquals("hostname can't be blank", hostnameViolation.getMessage());
 
         ConstraintViolation<ProxyNetworkConfig> portViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("port");
-                })
+                .filter(v -> v.getPropertyPath().toString().equals("port"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for null port not found"));
         assertEquals("port can't be null", portViolation.getMessage());
@@ -146,17 +143,13 @@ class ProxyNetworkConfigTest {
         assertEquals(2, violations.size());
 
         ConstraintViolation<ProxyNetworkConfig> hostnameViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("hostname");
-                })
+                .filter(v -> v.getPropertyPath().toString().equals("hostname"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for 50+ hostname letters"));
         assertEquals("Name must be between 1 and 50 characters", hostnameViolation.getMessage());
 
         ConstraintViolation<ProxyNetworkConfig> portViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("port");
-                })
+                .filter(v -> v.getPropertyPath().toString().equals("port"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected violation for port more than 65535"));
         assertEquals("port can't be more than 65535", portViolation.getMessage());
@@ -165,23 +158,23 @@ class ProxyNetworkConfigTest {
     @Test
     @DisplayName("Test validation fails for less size than should be in ProxyNetworkConfig")
     void testValidationFailsForSizeLessProxyNetworkConfig() {
-        ProxyNetworkConfig networkConfig = new ProxyNetworkConfig("", -1);
+        ProxyNetworkConfig networkConfig = new ProxyNetworkConfig(null, -1);
         Set<ConstraintViolation<ProxyNetworkConfig>> violations = validator.validate(networkConfig);
 
-        ConstraintViolation<ProxyNetworkConfig> hostnameViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("hostname");
-                })
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected violation for 50+ hostname letters"));
-        assertEquals("Name must be between 1 and 50 characters", hostnameViolation.getMessage());
+        ConstraintViolation<ProxyNetworkConfig> hostnameViolation =
+                violations.stream()
+                          .filter(v -> v.getPropertyPath().toString().equals("hostname"))
+                          .findFirst()
+                          .orElseThrow(() -> new AssertionError("Expected violation for 50+ hostname letters"));
 
-        ConstraintViolation<ProxyNetworkConfig> portViolation = violations.stream()
-                .filter(v -> {
-                    return v.getPropertyPath().toString().equals("port");
-                })
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected violation for port more than 65535"));
+        String expectedMessage = "hostname can't be blank";
+        assertEquals(expectedMessage, hostnameViolation.getMessage());
+
+        ConstraintViolation<ProxyNetworkConfig> portViolation =
+                violations.stream()
+                          .filter(v -> v.getPropertyPath().toString().equals("port"))
+                          .findFirst()
+                          .orElseThrow(() -> new AssertionError("Expected violation for port more than 65535"));
         assertEquals("port can't be less than 0", portViolation.getMessage());
     }
 }
