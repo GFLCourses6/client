@@ -1,6 +1,7 @@
 package com.gfl.client.exception.handler;
 
 import com.gfl.client.mapper.ProxyMapper;
+import com.gfl.client.security.RsaManager;
 import com.gfl.client.service.proxy.queue.AsyncProxyQueueTaskProcessor;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -32,6 +33,9 @@ class ErrorHandlerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private RsaManager rsaManager;
 
     @MockBean
     private AsyncProxyQueueTaskProcessor asyncProxyQueueTaskProcessor;

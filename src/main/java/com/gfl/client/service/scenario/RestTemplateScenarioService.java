@@ -17,15 +17,13 @@ import java.util.List;
 public class RestTemplateScenarioService
         implements ScenarioService {
 
-
-
     @Value("${worker.base.uri}")
     private String baseUrl;
     @Value("${client.auth.token.value}")
     private String clientAuthToken;
 
     private final RestTemplate restTemplate;
-    private RsaManager rsaManager;
+    private final RsaManager rsaManager;
 
     public ResponseEntity<Void> sendScenarios(String username,
                                               List<ScenarioRequest> scenarios) {
@@ -85,7 +83,6 @@ public class RestTemplateScenarioService
     private HttpHeaders getWorkerCommonHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        rsaManager.initFromStrings();
         String encryptedClientAuthToken = rsaManager.encrypt(clientAuthToken);
         headers.add(HttpHeaders.AUTHORIZATION, "Token " + encryptedClientAuthToken);
         return headers;
