@@ -19,5 +19,6 @@ public class ScenarioResult {
     private String name;
     private String site;
     private String username;
+    private String proxy;
     private List<StepResult> stepResults;
 }
