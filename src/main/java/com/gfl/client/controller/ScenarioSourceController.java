@@ -36,7 +36,7 @@ public class ScenarioSourceController implements ScenarioController {
     @PreAuthorize("@SecurityAccessHandler.authHasName(#username)")
     @GetMapping(value = "/executed/{username}")
     public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(
-            @PathVariable("username") String username) {
+            @P("username") @PathVariable("username") String username) {
         return restTemplateScenarioService.getExecutedScenarios(username);
     }
 
