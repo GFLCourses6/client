@@ -27,7 +27,7 @@ public class ScenarioSourceController implements ScenarioController {
     private final Logger logger = LoggerFactory.getLogger(ScenarioSourceController.class);
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> sendScenariosRequest(List<ScenarioRequest> scenarios) {
+    public ResponseEntity<Void> sendScenariosRequest(@RequestBody List<ScenarioRequest> scenarios) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         logger.info("sending {}'s scenarios, size = {}", username, scenarios.size());
         return restTemplateScenarioService.sendScenarios(username, scenarios);

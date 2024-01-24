@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public interface ScenarioController {
     })
     ResponseEntity<Void> sendScenariosRequest(
             @ApiParam(value = "List of scenario requests", required = true)
-            @RequestBody @NotEmpty(message = "scenarioRequest list can not be empty")
+            @NotEmpty(message = "scenarioRequest list can not be empty")
             List<@Valid ScenarioRequest> scenarios);
 
     @ApiOperation(value = "Get executed scenarios")
