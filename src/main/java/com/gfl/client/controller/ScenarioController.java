@@ -8,7 +8,10 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -29,6 +32,7 @@ public interface ScenarioController {
     })
     ResponseEntity<Void> sendScenariosRequest(
             @ApiParam(value = "List of scenario requests", required = true)
+            @RequestBody @NotEmpty(message = "scenarioRequest list can not be empty")
             List<@Valid ScenarioRequest> scenarios);
 
     @ApiOperation(value = "Get executed scenarios")
@@ -37,6 +41,7 @@ public interface ScenarioController {
     })
     ResponseEntity<List<ScenarioResult>> getExecutedScenarios(
             @ApiParam(value = "Username for which executed scenarios need to be retrieved", required = true)
+            @NotBlank(message = "username can't be blank")
             String username);
 
     @ApiOperation(value = "Get scenarios from queue by username")
@@ -45,6 +50,7 @@ public interface ScenarioController {
     })
     ResponseEntity<List<ScenarioRequest>> getScenariosFromQueueByUsername(
             @ApiParam(value = "Username for which scenarios need to be retrieved from queue", required = true)
+            @NotBlank(message = "username can't be blank")
             String username);
 
     @ApiOperation(value = "Get scenarios from queue by username and scenario name")
@@ -53,8 +59,10 @@ public interface ScenarioController {
     })
     ResponseEntity<List<ScenarioRequest>> getScenariosFromQueueByUsernameAndScenarioName(
             @ApiParam(value = "Username for which scenarios need to be retrieved from queue", required = true)
+            @NotBlank(message = "username can't be blank")
             String username,
             @ApiParam(value = "Scenario name for which scenarios need to be retrieved from queue", required = true)
+            @NotBlank(message = "scenarioName can't be blank")
             String scenarioName);
 
 }

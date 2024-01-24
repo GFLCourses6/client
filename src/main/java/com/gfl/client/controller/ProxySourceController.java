@@ -2,8 +2,6 @@ package com.gfl.client.controller;
 
 import com.gfl.client.model.ProxyConfigHolder;
 import com.gfl.client.service.proxy.queue.ProxySourceQueueHandler;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +24,14 @@ public class ProxySourceController implements ProxyController {
     @PostMapping
     public ResponseEntity<Void> addProxy(
             Authentication authentication,
-            @RequestBody @Valid ProxyConfigHolder proxy) {
+            @RequestBody ProxyConfigHolder proxy) {
         proxySourceQueueHandler.addProxy(authentication.getName(), proxy);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{username}")
-    @PreAuthorize("hasRole('WORKER' or hasRole('ADMIN'))")
+    @PreAuthorize("hasRole('WORKER') or hasRole('ADMIN')")
     public ResponseEntity<ProxyConfigHolder> getProxy(
-            @NotBlank(message = "username can't be blank")
             @PathVariable String username) {
         var proxy = proxySourceQueueHandler.getProxy(username);
         logger.info("retrieved proxy: {}", proxy);

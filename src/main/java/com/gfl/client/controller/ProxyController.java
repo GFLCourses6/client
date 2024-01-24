@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
@@ -39,6 +40,7 @@ public interface ProxyController {
     })
     ResponseEntity<ProxyConfigHolder> getProxy(
             @ApiParam(value = "Username for which proxy needs to be retrieved", required = true)
+            @NotBlank(message = "username can't be blank")
             String username);
 
 }
