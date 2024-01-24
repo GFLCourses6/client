@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,25 +33,25 @@ public class ScenarioSourceController implements ScenarioController {
         return restTemplateScenarioService.sendScenarios(username, scenarios);
     }
 
-    @PreAuthorize("authentication.name == #username")
+    @PreAuthorize("@SecurityAccessHandler.authHasName(#username)")
     @GetMapping(value = "/executed/{username}")
     public ResponseEntity<List<ScenarioResult>> getExecutedScenarios(
-            @PathVariable String username) {
+            @PathVariable("username") String username) {
         return restTemplateScenarioService.getExecutedScenarios(username);
     }
 
-    @PreAuthorize("authentication.name == #username")
+    @PreAuthorize("@SecurityAccessHandler.authHasName(#username)")
     @GetMapping(value = "/queue/{username}")
     public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueueByUsername(
-            @PathVariable String username) {
+            @P("username") @PathVariable("username") String username) {
         return restTemplateScenarioService.getScenariosFromQueue(username);
     }
 
-    @PreAuthorize("authentication.name == #username")
+    @PreAuthorize("@SecurityAccessHandler.authHasName(#username)")
     @GetMapping(value = "/queue/{username}/{scenarioName}")
     public ResponseEntity<List<ScenarioRequest>> getScenariosFromQueueByUsernameAndScenarioName(
-            @PathVariable String username,
-            @PathVariable String scenarioName) {
+            @P("username") @PathVariable("username") String username,
+            @PathVariable("scenarioName") String scenarioName) {
         return restTemplateScenarioService.getScenariosFromQueue(username, scenarioName);
     }
 }
