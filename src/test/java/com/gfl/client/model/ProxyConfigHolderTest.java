@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -147,9 +148,6 @@ class ProxyConfigHolderTest {
         Set<ConstraintViolation<ProxyConfigHolder>> violations = validator.validate(configHolder);
         assertEquals(3, violations.size());
 
-        ConstraintViolation<ProxyConfigHolder> violation = violations.iterator().next();
-        assertEquals("Specify only one of useTimes or useAlways", violation.getMessage());
-
         ConstraintViolation<ProxyConfigHolder> hostnameViolation = violations.stream()
                 .filter(v -> "proxyNetworkConfig.hostname".equals(v.getPropertyPath().toString()))
                 .findFirst()
@@ -162,7 +160,11 @@ class ProxyConfigHolderTest {
                 .orElseThrow(() -> new AssertionError("Expected violation for null port not found"));
         assertEquals("port can't be null", portViolation.getMessage());
 
-
+        ConstraintViolation<ProxyConfigHolder> thirdViolation = violations.stream()
+                .filter(v -> "".equals(v.getPropertyPath().toString()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected violation for useTimes and useAlways property not found"));
+        assertEquals("Specify only one of useTimes or useAlways", thirdViolation.getMessage());
     }
 
     @Test
