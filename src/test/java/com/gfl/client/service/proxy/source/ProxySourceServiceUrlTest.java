@@ -1,7 +1,5 @@
-package com.gfl.client.service.proxy;
+package com.gfl.client.service.proxy.source;
 
-import com.gfl.client.service.proxy.source.ProxySourceService;
-import com.gfl.client.service.proxy.source.ProxySourceServiceUrl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
