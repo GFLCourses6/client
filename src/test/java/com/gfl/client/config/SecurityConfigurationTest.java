@@ -1,4 +1,5 @@
 package com.gfl.client.config;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,7 @@ public class SecurityConfigurationTest {
     @Test
     @WithMockUser(roles = "WORKER")
     public void testGetProxyWithWorkerRole() throws Exception {
-        String workerUsername = "workerUsername";
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/proxy/" + workerUsername)
+        mockMvc.perform(MockMvcRequestBuilders.get("/proxy/{username}", "ivan")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
