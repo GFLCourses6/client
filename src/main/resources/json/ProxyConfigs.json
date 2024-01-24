@@ -7,7 +7,9 @@
     "proxyCredentials": {
       "username": "ixfkiyxf",
       "password": "0v2ypvysubnt"
-    }
+    },
+    "useTimes": 1,
+    "useAlways": true
   },
   {
     "proxyNetworkConfig": {
@@ -17,7 +19,9 @@
     "proxyCredentials": {
       "username": "ixfkiyxf",
       "password": "0v2ypvysubnt"
-    }
+    },
+    "useTimes": 1,
+    "useAlways": true
   },
   {
     "proxyNetworkConfig": {
@@ -27,7 +31,9 @@
     "proxyCredentials": {
       "username": "ixfkiyxf",
       "password": "0v2ypvysubnt"
-    }
+    },
+    "useTimes": 1,
+    "useAlways": true
   },
   {
     "proxyNetworkConfig": {
@@ -37,6 +43,8 @@
     "proxyCredentials": {
       "username": "ixfkiyxf",
       "password": "0v2ypvysubnt"
-    }
+    },
+    "useTimes": 1,
+    "useAlways": true
   }
 ]
