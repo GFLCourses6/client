@@ -1,5 +1,6 @@
 [
   {
+    "useTimes": 1,
     "proxyNetworkConfig": {
       "hostname": "193.42.225.12",
       "port": 6503
@@ -10,6 +11,7 @@
     }
   },
   {
+    "useTimes": 1,
     "proxyNetworkConfig": {
       "hostname": "119.42.39.191",
       "port": 5819
@@ -20,6 +22,7 @@
     }
   },
   {
+    "useTimes": 1,
     "proxyNetworkConfig": {
       "hostname": "103.101.90.97",
       "port": 6362
@@ -30,6 +33,7 @@
     }
   },
   {
+    "useTimes": 1,
     "proxyNetworkConfig": {
       "hostname": "104.238.10.147",
       "port": 6093

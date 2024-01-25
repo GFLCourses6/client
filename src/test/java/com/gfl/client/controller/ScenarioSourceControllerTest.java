@@ -17,6 +17,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,15 +55,13 @@ class ScenarioSourceControllerTest {
     @ParameterizedTest
     @ArgumentsSource(ScenariosArgumentsProvider.class)
     void getScenariosFromQueueValidUsernameSuccess(List<ScenarioRequest> scenarios) throws Exception {
-        String username = "user";
+        String username = "ivan";
 
         when(service.getScenariosFromQueue(username))
                 .thenReturn(new ResponseEntity<>(scenarios, HttpStatus.OK));
 
-        mockMvc.perform(get("/scenario/queue/{username}", username)
-                                 .with(SecurityMockMvcRequestPostProcessors.jwt())
-                                 .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.get("/scenario/queue/{username}", username))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @ParameterizedTest
@@ -79,15 +79,14 @@ class ScenarioSourceControllerTest {
     void getScenariosFromQueueValidUsernameAndScenarioNameSuccess(
             List<ScenarioRequest> scenarios)
             throws Exception {
-        String username = "user";
+        String username = "ivan";
         String scenarioName = "Scenario click";
         when(service.getScenariosFromQueue(username, scenarioName))
                 .thenReturn(new ResponseEntity<>(scenarios, HttpStatus.OK));
+
         mockMvc.perform(get("/scenario/queue/{username}/{scenarioName}",
-                             username, scenarioName)
-                                 .contentType(APPLICATION_JSON)
-                                 .with(SecurityMockMvcRequestPostProcessors.jwt()))
-                .andExpect(status().isOk());
+                        username, scenarioName))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @ParameterizedTest

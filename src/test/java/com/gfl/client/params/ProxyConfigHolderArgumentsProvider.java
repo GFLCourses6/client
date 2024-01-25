@@ -22,7 +22,7 @@ public class ProxyConfigHolderArgumentsProvider {
                 new ProxyCredentials(
                         "ixfkiyxf",
                         "0v2ypvysubnt"
-                ), 1L, true
+                ), 1L, false
         ));
 
         proxyConfigHolders.add(new ProxyConfigHolder(
@@ -33,7 +33,7 @@ public class ProxyConfigHolderArgumentsProvider {
                 new ProxyCredentials(
                         "ixfkiyxf",
                         "0v2ypvysubnt"
-                ), 1L, true
+                ), 1L, false
         ));
 
         proxyConfigHolders.add(new ProxyConfigHolder(
@@ -44,7 +44,7 @@ public class ProxyConfigHolderArgumentsProvider {
                 new ProxyCredentials(
                         "ixfkiyxf",
                         "0v2ypvysubnt"
-                ), 1L, true
+                ), 1L, false
         ));
 
         proxyConfigHolders.add(new ProxyConfigHolder(
@@ -55,7 +55,7 @@ public class ProxyConfigHolderArgumentsProvider {
                 new ProxyCredentials(
                         "ixfkiyxf",
                         "0v2ypvysubnt"
-                ), 1L, true
+                ), 1L, false
         ));
 
 

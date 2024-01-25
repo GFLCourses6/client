@@ -13,6 +13,8 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class DefaultProxyValidationService implements ProxyValidationService {
     @Value("${proxy.validation.timeout}")
     private int timeout;
     private final HttpUriRequest request;
+
+    private final Logger logger = LoggerFactory.getLogger(DefaultProxyValidationService.class);
 
     public DefaultProxyValidationService(@Qualifier("proxyValidationRequest") HttpUriRequest request) {
         this.request = request;
@@ -40,6 +44,7 @@ public class DefaultProxyValidationService implements ProxyValidationService {
             int statusCode = response.getStatusLine().getStatusCode();
             return statusCode == 200 || statusCode == 429; // ok or too many requests
         } catch (Exception e) {
+            logger.error("Invalid proxy detected: {}", proxyConfig);
             return false;
         }
     }

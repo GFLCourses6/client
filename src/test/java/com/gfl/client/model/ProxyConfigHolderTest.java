@@ -7,12 +7,11 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
-import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProxyConfigHolderTest {
 
@@ -21,7 +20,6 @@ class ProxyConfigHolderTest {
     private ProxyCredentials proxyCredentials;
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
-
 
     @BeforeEach
     void setUp(){
@@ -136,7 +134,6 @@ class ProxyConfigHolderTest {
 
         assertEquals(proxyConfigHolder, proxyConfigHolder1);
         assertEquals(proxyConfigHolder.hashCode(), proxyConfigHolder1.hashCode());
-
     }
 
     @Test
@@ -147,22 +144,12 @@ class ProxyConfigHolderTest {
         Set<ConstraintViolation<ProxyConfigHolder>> violations = validator.validate(configHolder);
         assertEquals(3, violations.size());
 
-        ConstraintViolation<ProxyConfigHolder> violation = violations.iterator().next();
-        assertEquals("Specify only one of useTimes or useAlways", violation.getMessage());
+        List<String> violationMessages = violations.stream()
+                .map(ConstraintViolation::getMessage).toList();
 
-        ConstraintViolation<ProxyConfigHolder> hostnameViolation = violations.stream()
-                .filter(v -> "proxyNetworkConfig.hostname".equals(v.getPropertyPath().toString()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected violation for null hostname not found"));
-        assertEquals("hostname can't be blank", hostnameViolation.getMessage());
-
-        ConstraintViolation<ProxyConfigHolder> portViolation = violations.stream()
-                .filter(v -> "proxyNetworkConfig.port".equals(v.getPropertyPath().toString()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected violation for null port not found"));
-        assertEquals("port can't be null", portViolation.getMessage());
-
-
+        assertTrue(violationMessages.contains("Specify only one of useTimes or useAlways"));
+        assertTrue(violationMessages.contains("hostname can't be blank"));
+        assertTrue(violationMessages.contains("port can't be null"));
     }
 
     @Test
@@ -173,30 +160,10 @@ class ProxyConfigHolderTest {
         Set<ConstraintViolation<ProxyConfigHolder>> violations = validator.validate(configHolder);
         assertEquals(2, violations.size());
 
-        ConstraintViolation<ProxyConfigHolder> usernameViolation = violations.stream()
-                .filter(v -> "proxyCredentials.username".equals(v.getPropertyPath().toString()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected violation for null username not found"));
-        assertEquals("Username must not be blank", usernameViolation.getMessage());
+        List<String> violationMessages = violations.stream()
+                .map(ConstraintViolation::getMessage).toList();
 
-        ConstraintViolation<ProxyConfigHolder> passwordViolation = violations.stream()
-                .filter(v -> "proxyCredentials.password".equals(v.getPropertyPath().toString()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected violation for null password not found"));
-        assertEquals("Password must not be blank", passwordViolation.getMessage());
-    }
-
-    private static Stream<Object[]> invalidProxyConfigHolder() {
-        return Stream.of(
-                new Object[] { new ProxyConfigHolder(null, new ProxyCredentials("username", "password"), 1L, true), "proxy network configuration cannot be null" },
-                new Object[] { new ProxyConfigHolder(new ProxyNetworkConfig("hostname", 8080), new ProxyCredentials(null, "password"), 1L, true), "username cannot be null" },
-                new Object[] { new ProxyConfigHolder(new ProxyNetworkConfig("hostname", 8080), new ProxyCredentials("username", ""), 1L, true), "password cannot be blank" }
-        );
-    }
-
-    private static Stream<ProxyConfigHolder> validProxyConfigHolder() {
-        return Stream.of(
-                new ProxyConfigHolder(new ProxyNetworkConfig("hostname", 8080), new ProxyCredentials("username", "password"), 1L, true)
-        );
+        assertTrue(violationMessages.contains("Username must not be blank"));
+        assertTrue(violationMessages.contains("Password must not be blank"));
     }
 }
