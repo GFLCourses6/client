@@ -29,7 +29,7 @@ public class ProxySourceServiceUrl implements ProxySourceService {
 
         ResponseEntity<ProxyApiResponse> responseEntity = restTemplate.exchange(
                 apiUrl, HttpMethod.GET, entity, ProxyApiResponse.class);
-        var proxies = responseEntity.getBody();
+        ProxyApiResponse proxies = responseEntity.getBody();
 
         if (responseEntity.getStatusCode().is2xxSuccessful()
                 && proxies != null && proxies.getCount() > 0) {
