@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(properties = "proxy.source.type=file")
-public class ProxySourceServiceFileTest {
+class ProxySourceServiceFileTest {
 
     @Value("${proxy.filepath}")
     private String proxyFilePath;

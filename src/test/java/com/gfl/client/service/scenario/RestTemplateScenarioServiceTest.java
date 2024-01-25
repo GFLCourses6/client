@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class RestTemplateScenarioServiceTest {
+class RestTemplateScenarioServiceTest {
 
     @Autowired
     private RestTemplateScenarioService restTemplateScenarioService;
