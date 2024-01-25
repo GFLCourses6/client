@@ -16,15 +16,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource(properties = "proxy.source.type=url")
+@TestPropertySource(properties = "property.source.type=url")
 class ProxySourceServiceUrlTest {
 
     @MockBean
@@ -37,52 +39,64 @@ class ProxySourceServiceUrlTest {
     private ProxySourceService proxySourceService;
 
     @Test
-    void testFileProxySourceService() {
-        assertInstanceOf(ProxySourceServiceUrl.class, proxySourceService);
-    }
+    void testGetAllProxyConfigsSuccessfulResponseReturnsProxyConfigHolders() {
+        ProxyApiResponse proxyApiResponseMock = mock(ProxyApiResponse.class);
 
-    @Test
-    void testGetAllProxyConfigsSuccess() {
-        ProxyApiResponse mockApiResponse = mock(ProxyApiResponse.class);
-        var expectedProxiesResponse = List.of(new ProxyInfoApiResponse(), new ProxyInfoApiResponse());
-        var expectedProxies = List.of(new ProxyConfigHolder(), new ProxyConfigHolder());
+        List<ProxyInfoApiResponse> proxiesResponseExpected = List.of(new ProxyInfoApiResponse(), new ProxyInfoApiResponse());
+        List<ProxyConfigHolder> expectedProxyFromConfigHolders = List.of(new ProxyConfigHolder(), new ProxyConfigHolder());
         int proxiesCount = 2;
 
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET),
-                any(HttpEntity.class), eq(ProxyApiResponse.class)))
-                .thenReturn(ResponseEntity.ok(mockApiResponse));
+        when(proxyApiResponseMock.getCount()).thenReturn(proxiesCount);
+        when(proxyApiResponseMock.getResults()).thenReturn(proxiesResponseExpected);
 
-        when(mockApiResponse.getCount()).thenReturn(proxiesCount);
-        when(mockApiResponse.getResults()).thenReturn(expectedProxiesResponse);
-        when(proxyMapper.responseToProxyConfigHolder(expectedProxiesResponse))
-                .thenReturn(expectedProxies);
+        ResponseEntity<ProxyApiResponse> responseEntity = new ResponseEntity<>(proxyApiResponseMock, HttpStatus.OK);
 
-        List<ProxyConfigHolder> actualProxies = proxySourceService.getAllProxyConfigs();
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ProxyApiResponse.class))).thenReturn(responseEntity);
 
-        verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET),
-                any(HttpEntity.class), eq(ProxyApiResponse.class));
-        verify(mockApiResponse).getCount();
-        verify(mockApiResponse).getResults();
-        verify(proxyMapper).responseToProxyConfigHolder(expectedProxiesResponse);
-        assertEquals(2, actualProxies.size());
-        assertEquals(expectedProxies, actualProxies);
+        when(proxyMapper.responseToProxyConfigHolder(proxiesResponseExpected)).thenReturn(expectedProxyFromConfigHolders);
+
+        List<ProxyConfigHolder> actualProxyConfigHolders = proxySourceService.getAllProxyConfigs();
+
+        verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ProxyApiResponse.class));
+        verify(proxyMapper).responseToProxyConfigHolder(proxiesResponseExpected);
+        assertEquals(expectedProxyFromConfigHolders, actualProxyConfigHolders);
     }
 
     @Test
-    void testGetAllProxyConfigsFail() {
-        ResponseEntity<ProxyApiResponse> response = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    void testGetAllProxyConfigsEmptyResponseReturnsEmptyList() {
+        ProxyApiResponse proxyApiResponseMock = mock(ProxyApiResponse.class);
+        proxyApiResponseMock.setCount(0);
+        proxyApiResponseMock.setResults(Collections.emptyList());
+        ResponseEntity<ProxyApiResponse> responseEntity = new ResponseEntity<>(proxyApiResponseMock, HttpStatus.BAD_REQUEST);
 
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET),
-                any(HttpEntity.class), eq(ProxyApiResponse.class)))
-                .thenReturn(response);
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ProxyApiResponse.class))).thenReturn(responseEntity);
 
-        List<ProxyConfigHolder> actualProxies = proxySourceService.getAllProxyConfigs();
+        List<ProxyConfigHolder> actualProxyInConfigHolders = proxySourceService.getAllProxyConfigs();
 
-        verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET),
-                any(HttpEntity.class), eq(ProxyApiResponse.class));
-        assertTrue(response.getStatusCode().is4xxClientError());
-        verify(proxyMapper, never()).responseToProxyConfigHolder(any(List.class));
-        assertTrue(actualProxies.isEmpty());
+        verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(ProxyApiResponse.class));
+        verify(proxyMapper, never()).responseToProxyConfigHolder(anyList());
+        assertTrue(responseEntity.getStatusCode().is4xxClientError());
+        assertTrue(actualProxyInConfigHolders.isEmpty());
+    }
+
+    @Test
+    void testGetAllProxyConfigsApiResponseIsSuccessfulButNoProxyConfigsReturnEmptyList() {
+        ProxyApiResponse proxyApiResponse = new ProxyApiResponse(0, null, null, Collections.emptyList());
+        ResponseEntity<ProxyApiResponse> responseEntity = new ResponseEntity<>(proxyApiResponse, HttpStatus.OK);
+        when(restTemplate.exchange(anyString(), any(), any(), eq(ProxyApiResponse.class))).thenReturn(responseEntity);
+
+        List<ProxyConfigHolder> actualProxyConfigs = proxySourceService.getAllProxyConfigs();
+
+        assertEquals(Collections.emptyList(), actualProxyConfigs);
+    }
+
+    @Test
+    void testGetAllProxyConfigsApiResponseIsNotSuccessfulReturnEmptyList() {
+        ResponseEntity<ProxyApiResponse> responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        when(restTemplate.exchange(anyString(), any(), any(), eq(ProxyApiResponse.class))).thenReturn(responseEntity);
+
+        List<ProxyConfigHolder> actualProxyConfigs = proxySourceService.getAllProxyConfigs();
+
+        assertEquals(Collections.emptyList(), actualProxyConfigs);
     }
 }
-

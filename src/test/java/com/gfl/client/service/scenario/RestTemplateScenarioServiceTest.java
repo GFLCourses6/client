@@ -1,6 +1,8 @@
 package com.gfl.client.service.scenario;
 
 import com.gfl.client.model.ScenarioRequest;
+import com.gfl.client.model.ScenarioResult;
+import com.gfl.client.security.RsaManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,43 +20,72 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
 @ActiveProfiles("test")
+@SpringBootTest
 public class RestTemplateScenarioServiceTest {
 
     @Autowired
-    private RestTemplateScenarioService scenarioService;
+    private RestTemplateScenarioService restTemplateScenarioService;
 
     @MockBean
     private RestTemplate restTemplate;
 
-    private String username = "ivan";
+    @MockBean
+    private RsaManager rsaManager;
 
     @Test
-    void sendScenarios() {
+    public void testSendScenariosWithGivenUsernameAndScenariosAndReturnResponseEntity() {
+        String username = "testUsername";
         List<ScenarioRequest> scenarios = Collections.singletonList(new ScenarioRequest());
-        scenarioService.sendScenarios(username, scenarios);
+        ResponseEntity<Void> expectedResponse = ResponseEntity.ok().build();
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(Void.class))).thenReturn(expectedResponse);
+        when(rsaManager.encrypt(anyString())).thenReturn("encryptedToken");
 
-        assertEquals(username, scenarios.get(0).getUsername());
+        ResponseEntity<Void> actualResponse = restTemplateScenarioService.sendScenarios(username, scenarios);
+
+        assertEquals(expectedResponse, actualResponse);
         verify(restTemplate).postForEntity(anyString(), any(HttpEntity.class), eq(Void.class));
     }
 
     @Test
-    void getExecutedScenarios() {
-        scenarioService.getExecutedScenarios(username);
+    public void testGetExecutedScenariosWithGivenUsernameAndReturnResponseEntity() {
+        String username = "testUsername";
+        ResponseEntity<List<ScenarioResult>> expectedResponse = ResponseEntity.ok().build();
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), any(ParameterizedTypeReference.class))).thenReturn(expectedResponse);
+        when(rsaManager.encrypt(anyString())).thenReturn("encryptedToken");
+
+        ResponseEntity<List<ScenarioResult>> actualResponse = restTemplateScenarioService.getExecutedScenarios(username);
+
+        assertEquals(expectedResponse, actualResponse);
         verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), any(ParameterizedTypeReference.class));
     }
 
     @Test
-    void getScenariosFromQueueByUsername() {
-        scenarioService.getScenariosFromQueue(username);
+    public void testGetScenariosFromQueueWithGivenUsernameAndReturnResponseEntity() {
+        String username = "testUsername";
+        ResponseEntity<List<ScenarioRequest>> expectedResponse = ResponseEntity.ok().build();
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), any(ParameterizedTypeReference.class))).thenReturn(expectedResponse);
+        when(rsaManager.encrypt(anyString())).thenReturn("encryptedToken");
+
+        ResponseEntity<List<ScenarioRequest>> actualResponse = restTemplateScenarioService.getScenariosFromQueue(username);
+
+        assertEquals(expectedResponse, actualResponse);
         verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), any(ParameterizedTypeReference.class));
     }
 
     @Test
-    void getScenariosFromQueueByUsernameAndScenario() {
-        scenarioService.getScenariosFromQueue(username, "scenario");
+    public void testGetScenariosFromQueueWhenGivenUsernameAndScenarioNameThenReturnResponseEntity() {
+        String username = "testUsername";
+        String scenarioName = "testScenario";
+        ResponseEntity<List<ScenarioRequest>> expectedResponse = ResponseEntity.ok().build();
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), any(ParameterizedTypeReference.class))).thenReturn(expectedResponse);
+        when(rsaManager.encrypt(anyString())).thenReturn("encryptedToken");
+
+        ResponseEntity<List<ScenarioRequest>> actualResponse = restTemplateScenarioService.getScenariosFromQueue(username, scenarioName);
+
+        assertEquals(expectedResponse, actualResponse);
         verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), any(ParameterizedTypeReference.class));
     }
 }
