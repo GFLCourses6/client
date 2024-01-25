@@ -75,7 +75,7 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
                 }));
     }
 
-    private Optional <ProxyConfigHolder> getUserProxy(String username) {
+    public Optional <ProxyConfigHolder> getUserProxy(String username) {
         var queue = queues.get(username);
         var lock = queueLocks.get(username);
         return (queue != null && !queue.isEmpty())
@@ -106,7 +106,7 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
         }
     }
 
-    private BlockingQueue<ProxyConfigHolder> getCommonQueue() {
+    public BlockingQueue<ProxyConfigHolder> getCommonQueue() {
         return queues.get(COMMON_QUEUE);
     }
 
