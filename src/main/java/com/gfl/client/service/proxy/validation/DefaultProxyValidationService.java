@@ -6,13 +6,13 @@ import com.gfl.client.model.ProxyNetworkConfig;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,6 +55,7 @@ public class DefaultProxyValidationService implements ProxyValidationService {
         ProxyNetworkConfig networkConfig = proxyConfig.getProxyNetworkConfig();
         ProxyCredentials credentials = proxyConfig.getProxyCredentials();
 
+        // configure proxy authentication
         if (credentials != null) {
             AuthScope authScope = new AuthScope(networkConfig.getHostname(), networkConfig.getPort());
             credentialsProvider.setCredentials(authScope, new org.apache.http.auth.UsernamePasswordCredentials(
@@ -62,14 +63,25 @@ public class DefaultProxyValidationService implements ProxyValidationService {
             ));
         }
 
+        // build proxy
         HttpHost proxy = new HttpHost(networkConfig.getHostname(), networkConfig.getPort());
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(timeout).build());
+
+        // set timeouts
+        SocketConfig socketConfig = SocketConfig.custom()
+                .setSoTimeout(timeout)
+                .build();
+
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .build();
 
         return HttpClients.custom()
-            .setProxy(proxy)
-            .setDefaultCredentialsProvider(credentialsProvider)
-            .setConnectionManager(cm)
-            .build();
+                .setProxy(proxy)
+                .setDefaultSocketConfig(socketConfig)
+                .setDefaultCredentialsProvider(credentialsProvider)
+                .setDefaultRequestConfig(config)
+                .build();
     }
 }
