@@ -56,34 +56,33 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
         if (!proxy.isUseAlways() && proxy.getUseTimes() == null) {
             proxy.setUseTimes(1L);
         }
+        // create lock and queue for the user if it doesn't exist and get them afterwards
         queueLocks.computeIfAbsent(queueName, key -> new ReentrantLock());
         Queue<ProxyConfigHolder> queue = queues.computeIfAbsent(
                 queueName, key -> new LinkedBlockingQueue<>());
+
         queue.add(proxy);
     }
 
     @Override
     public ProxyConfigHolder getProxy(String username) {
-        Queue<ProxyConfigHolder> commonQueue = getCommonQueue();
-        Lock commonLock = getCommonLock();
-
         // retrieve user's proxy, if it doesn't exist, retrieve common proxy, else return null
-        return getUserProxy(username).orElseGet(() ->
-                getProxy(commonQueue, commonLock).orElseGet(()-> {
+        return getProxyFromQueue(username).orElseGet(() ->
+                getProxyFromQueue(COMMON_QUEUE).orElseGet(()-> {
                     asyncProxyQueueTaskExecutor.fillCommonQueue();
                     return null;
                 }));
     }
 
-    public Optional <ProxyConfigHolder> getUserProxy(String username) {
-        var queue = queues.get(username);
-        var lock = queueLocks.get(username);
-        return (queue != null && !queue.isEmpty())
-                ? getProxy(queue, lock)
+    private Optional<ProxyConfigHolder> getProxyFromQueue(String queueName) {
+        var queue = queues.get(queueName);
+        var lock = queueLocks.get(queueName);
+        return (queue != null && !queue.isEmpty()) // try to find proxy if queue exists and it's not empty
+                ? findProxy(queue, lock)
                 : Optional.empty();
     }
 
-    private Optional<ProxyConfigHolder> getProxy(Queue<ProxyConfigHolder> queue, Lock lock) {
+    private Optional<ProxyConfigHolder> findProxy(Queue<ProxyConfigHolder> queue, Lock lock) {
         lock.lock();
         try {
             var optionalProxy = queue.stream()
@@ -106,12 +105,11 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
         }
     }
 
-    public BlockingQueue<ProxyConfigHolder> getCommonQueue() {
+    BlockingQueue<ProxyConfigHolder> getCommonQueue() {
         return queues.get(COMMON_QUEUE);
     }
 
     private Lock getCommonLock() {
         return queueLocks.get(COMMON_QUEUE);
     }
-
 }
