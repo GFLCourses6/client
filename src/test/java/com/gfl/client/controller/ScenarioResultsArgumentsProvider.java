@@ -2,7 +2,6 @@ package com.gfl.client.controller;
 
 import com.gfl.client.model.ExecutionStatus;
 import com.gfl.client.model.ScenarioResult;
-import com.gfl.client.model.Step;
 import com.gfl.client.model.StepResult;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,7 +18,6 @@ public class ScenarioResultsArgumentsProvider
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-        Step step = new Step("click", "button");
         StepResult stepResult = new StepResult(1L,
                                                "action",
                                                "value",

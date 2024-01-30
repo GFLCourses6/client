@@ -42,7 +42,7 @@ public class DefaultProxyValidationService implements ProxyValidationService {
         try (CloseableHttpClient httpClient = buildHttpClient(proxyConfig)) {
             CloseableHttpResponse response = httpClient.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
-            return statusCode == 200 || statusCode == 429; // ok or too many requests
+            return statusCode == 200;
         } catch (Exception e) {
             logger.error("Invalid proxy detected: {}", proxyConfig);
             return false;

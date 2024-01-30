@@ -42,7 +42,7 @@ public class WorkerApiKeyValidationFilter extends OncePerRequestFilter {
             if (workerApiKey.equals(decryptedToken)) {
                 // set Authentication in Security Context with role `WORKER`
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        "username", null, getWorkerAuthorities());
+                        "worker", null, getWorkerAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

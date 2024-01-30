@@ -108,8 +108,4 @@ public class DefaultProxySourceQueueHandler implements ProxySourceQueueHandler {
     BlockingQueue<ProxyConfigHolder> getCommonQueue() {
         return queues.get(COMMON_QUEUE);
     }
-
-    private Lock getCommonLock() {
-        return queueLocks.get(COMMON_QUEUE);
-    }
 }
