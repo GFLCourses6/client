@@ -30,7 +30,7 @@ public class ProxySourceController implements ProxyController {
     }
 
     @GetMapping("/{username}")
-    @PreAuthorize("hasRole('WORKER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('WORKER')")
     public ResponseEntity<ProxyConfigHolder> getProxy(
             @PathVariable("username") String username) {
         var proxy = proxySourceQueueHandler.getProxy(username);

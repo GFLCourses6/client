@@ -1,7 +1,6 @@
 package com.gfl.client.exception.handler;
 
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +16,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class ErrorHandlerController {
-
-    @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleValidationException(ValidationException ex) {
-        String errorMessage = ((ConstraintViolationException) ex).getConstraintViolations().stream()
-                                        .map(violation -> violation.getMessage() + "; ")
-                                        .collect(Collectors.joining("", "Validation error(s): ", ""));
-        return ResponseEntity.badRequest().body(errorMessage);
-    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -56,7 +46,7 @@ public class ErrorHandlerController {
     }
 
     @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler({Exception.class, IllegalStateException.class})
+    @ExceptionHandler({Exception.class})
     public ResponseEntity<String> handleException(Exception ex) {
         return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
     }
