@@ -31,6 +31,7 @@ public class ScenarioResultsArgumentsProvider
                                                                        "https://google.com",
                                                                        "user",
                                                                        "proxy",
+                                                                       null,
                                                                        singletonList(
                                                                                stepResult)),
                                                     new ScenarioResult(1L,
@@ -38,6 +39,7 @@ public class ScenarioResultsArgumentsProvider
                                                                        "https://google.com",
                                                                        "admin",
                                                                        "proxy",
+                                                            null,
                                                                        singletonList(
                                                                                stepResult)))));
     }
