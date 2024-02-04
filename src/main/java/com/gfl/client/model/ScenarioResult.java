@@ -20,5 +20,6 @@ public class ScenarioResult {
     private String site;
     private String username;
     private String proxy;
+    private String executionMessage;
     private List<StepResult> stepResults;
 }
