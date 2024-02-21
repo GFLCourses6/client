@@ -4,6 +4,7 @@ import com.gfl.client.mapper.ProxyMapper;
 import com.gfl.client.model.ProxyApiResponse;
 import com.gfl.client.model.ProxyConfigHolder;
 import com.gfl.client.model.ProxyInfoApiResponse;
+import com.gfl.client.service.proxy.queue.DefaultAsyncProxyTaskProcessor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@MockBean({DefaultAsyncProxyTaskProcessor.class})
 @TestPropertySource(properties = "property.source.type=url")
 class ProxySourceServiceUrlTest {
 

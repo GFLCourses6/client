@@ -21,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-public class AppConfig implements WebMvcConfigurer{
+public class AppConfig implements WebMvcConfigurer {
 
     @Value("${proxy.validation.test-url}")
     private String testUrl;

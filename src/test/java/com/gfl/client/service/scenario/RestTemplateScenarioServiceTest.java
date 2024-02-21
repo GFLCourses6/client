@@ -3,6 +3,7 @@ package com.gfl.client.service.scenario;
 import com.gfl.client.model.ScenarioRequest;
 import com.gfl.client.model.ScenarioResult;
 import com.gfl.client.security.RsaManager;
+import com.gfl.client.service.proxy.queue.DefaultAsyncProxyTaskProcessor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +12,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -22,8 +22,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("test")
 @SpringBootTest
+@MockBean({DefaultAsyncProxyTaskProcessor.class})
 class RestTemplateScenarioServiceTest {
 
     @Autowired

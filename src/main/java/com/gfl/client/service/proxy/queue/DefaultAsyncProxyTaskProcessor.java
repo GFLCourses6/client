@@ -2,6 +2,7 @@ package com.gfl.client.service.proxy.queue;
 
 import com.gfl.client.model.ProxyConfigHolder;
 import com.gfl.client.service.proxy.source.ProxySourceService;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -23,6 +24,11 @@ public class DefaultAsyncProxyTaskProcessor implements AsyncProxyQueueTaskProces
         this.proxySourceQueueHandler = proxySourceQueueHandler;
         this.proxySourceService = proxySourceService;
         this.lock = new ReentrantLock();
+    }
+
+    @PostConstruct
+    void init() {
+        fillCommonQueue();
     }
 
     @Override
